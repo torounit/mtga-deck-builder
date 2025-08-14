@@ -5,9 +5,6 @@
 
 # IntelliJ project files
 .idea
-*.iml
-out
-gen
 
 # dependencies
 /node_modules
@@ -25,14 +22,14 @@ gen
 *.pem
 
 # debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
+/npm-debug.log*
+/yarn-debug.log*
+/yarn-error.log*
+/.pnpm-debug.log*
 
 # local env files
 .env*.local
 
 # typescript
-*.tsbuildinfo
+/*.tsbuildinfo
 

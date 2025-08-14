@@ -3,9 +3,7 @@
   "name": "mtga-deck-builder",
   "main": "./dist/index.js",
   "compatibility_date": "2025-08-13",
-  "compatibility_flags": [
-    "nodejs_compat"
-  ],
+  "compatibility_flags": ["nodejs_compat"],
   "assets": {
     "directory": "./dist"
   }

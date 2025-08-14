@@ -1,8 +1,8 @@
+import { includeIgnoreFile } from '@eslint/compat'
 import eslint from '@eslint/js'
-import tseslint from 'typescript-eslint'
 import honoEslintConfig from '@hono/eslint-config'
 import eslintConfigPrettier from 'eslint-config-prettier'
-import { includeIgnoreFile } from '@eslint/compat'
+import tseslint from 'typescript-eslint'
 import { fileURLToPath } from 'node:url'
 
 const gitignorePath = fileURLToPath(new URL('.gitignore', import.meta.url))
@@ -14,9 +14,13 @@ export default tseslint.config(
   eslintConfigPrettier,
   includeIgnoreFile(gitignorePath, 'Imported .gitignore patterns'),
   {
+    ignores: ['eslint.config.mjs']
+  },
+  {
     languageOptions: {
       parserOptions: {
-        projectService: true
+        projectService: true,
+        tsconfigRootDir: fileURLToPath(new URL('.', import.meta.url)),
       }
     }
   }
