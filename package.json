@@ -8,7 +8,8 @@
     "deploy": "npm run build && wrangler deploy",
     "format": "prettier --write .",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "prepare": "husky install"
   },
   "private": true,
   "dependencies": {
@@ -24,10 +25,21 @@
     "@tailwindcss/vite": "^4.0.9",
     "eslint": "^9.33.0",
     "eslint-config-prettier": "^10.1.8",
+    "husky": "^8.0.0",
+    "lint-staged": "^16.1.5",
     "prettier": "^3.6.2",
     "tailwindcss": "^4.0.9",
     "typescript": "^5.9.2",
     "vite": "^6.3.5",
     "wrangler": "^4.4.0"
+  },
+  "lint-staged": {
+    "*.{js,ts}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,jsonc}": [
+      "prettier --write"
+    ]
   }
 }
