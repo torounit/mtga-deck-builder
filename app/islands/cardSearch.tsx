@@ -2,7 +2,11 @@ import { useState } from 'hono/jsx'
 import type { Card, CardSearchFilters } from '../types/card'
 import { searchCards } from '../services/cardService'
 
-export default function CardSearch() {
+interface CardSearchProps {
+  onCardAdd?: (card: Card) => void
+}
+
+export default function CardSearch({ onCardAdd }: CardSearchProps) {
   const [searchQuery, setSearchQuery] = useState('')
   const [cards, setCards] = useState<Card[]>([])
   const [loading, setLoading] = useState(false)
@@ -60,7 +64,7 @@ export default function CardSearch() {
 
       <div class="grid grid-cols-4 gap-4">
         {cards.map((card) => (
-          <div key={card.id} class="border border-gray-200 rounded-lg p-3 hover:shadow-lg transition-shadow">
+          <div key={card.id} class="border border-gray-200 rounded-lg p-3 hover:shadow-lg transition-shadow relative group">
             {card.image_uris?.normal && (
               <img
                 src={card.image_uris.normal}
@@ -70,7 +74,18 @@ export default function CardSearch() {
             )}
             <h3 class="font-semibold text-sm mb-1">{card.name}</h3>
             <p class="text-xs text-gray-600 mb-1">{card.mana_cost}</p>
-            <p class="text-xs text-gray-500">{card.type_line}</p>
+            <p class="text-xs text-gray-500 mb-2">{card.type_line}</p>
+            
+            {onCardAdd && (
+              <div class="flex gap-1">
+                <button
+                  onClick={() => onCardAdd(card)}
+                  class="w-full px-2 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600"
+                >
+                  メイン
+                </button>
+              </div>
+            )}
           </div>
         ))}
       </div>

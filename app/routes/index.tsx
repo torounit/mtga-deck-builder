@@ -1,5 +1,5 @@
 import { createRoute } from 'honox/factory'
-import CardSearch from '../islands/cardSearch'
+import DeckBuilderApp from '../islands/deckBuilderApp'
 
 export default createRoute((c) => {
   return c.render(
@@ -11,7 +11,7 @@ export default createRoute((c) => {
         </div>
       </header>
       <main class="max-w-7xl mx-auto px-4 py-8">
-        <CardSearch />
+        <DeckBuilderApp />
       </main>
     </div>
   )
