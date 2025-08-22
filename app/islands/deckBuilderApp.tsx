@@ -6,9 +6,7 @@ import DeckBuilder from './deckBuilder'
 import { DeckService } from '../services/deckService'
 
 export default function DeckBuilderApp() {
-  const [deck, setDeck] = useState<Deck>(() => 
-    DeckService.loadDeck() ?? DeckService.createEmptyDeck()
-  )
+  const [deck, setDeck] = useState<Deck>(() => DeckService.createEmptyDeck())
 
   const handleCardAdd = (card: Card) => {
     const updatedDeck = DeckService.addCardToDeck(deck, card, 'main')

@@ -21,11 +21,19 @@ export const DeckService = {
   },
 
   saveDeck(deck: Deck): void {
-    deck.updatedAt = new Date()
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(deck))
+    // クライアントサイドでのみ実行
+    if (typeof window !== 'undefined') {
+      deck.updatedAt = new Date()
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(deck))
+    }
   },
 
   loadDeck(): Deck | null {
+    // クライアントサイドでのみ実行
+    if (typeof window === 'undefined') {
+      return null
+    }
+
     const saved = localStorage.getItem(STORAGE_KEY)
     if (!saved) return null
 

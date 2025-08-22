@@ -8,13 +8,23 @@ interface DeckBuilderProps {
 }
 
 export default function DeckBuilder({ onCardAdd }: DeckBuilderProps) {
-  const [deck, setDeck] = useState<Deck>(() => 
-    DeckService.loadDeck() ?? DeckService.createEmptyDeck()
-  )
+  const [deck, setDeck] = useState<Deck>(() => DeckService.createEmptyDeck())
+  const [isClient, setIsClient] = useState(false)
 
   useEffect(() => {
-    DeckService.saveDeck(deck)
-  }, [deck])
+    setIsClient(true)
+    // クライアントサイドでのみローカルストレージからロード
+    const savedDeck = DeckService.loadDeck()
+    if (savedDeck) {
+      setDeck(savedDeck)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (isClient) {
+      DeckService.saveDeck(deck)
+    }
+  }, [deck, isClient])
 
   const handleAddCard = (card: Card, location: 'main' | 'sideboard' = 'main') => {
     const updatedDeck = DeckService.addCardToDeck(deck, card, location)
