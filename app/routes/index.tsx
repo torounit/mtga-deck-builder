@@ -1,13 +1,18 @@
 import { createRoute } from 'honox/factory'
-import Counter from '../islands/counter'
+import CardSearch from '../islands/cardSearch'
 
 export default createRoute((c) => {
-  const name = c.req.query('name') ?? 'Hono'
   return c.render(
-    <div class="py-8 text-center">
-      <title>{name}</title>
-      <h1 class="text-3xl font-bold">Hello, {name}!</h1>
-      <Counter />
+    <div class="min-h-screen bg-gray-50">
+      <title>MTG Arena Deck Builder</title>
+      <header class="bg-white shadow-sm border-b">
+        <div class="max-w-7xl mx-auto px-4 py-6">
+          <h1 class="text-3xl font-bold text-gray-900">MTG Arena Deck Builder</h1>
+        </div>
+      </header>
+      <main class="max-w-7xl mx-auto px-4 py-8">
+        <CardSearch />
+      </main>
     </div>
   )
 })
