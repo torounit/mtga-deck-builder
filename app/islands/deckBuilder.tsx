@@ -1,6 +1,6 @@
-import type { Deck, DeckCard } from '../types/deck'
-import type { Card } from '../types/card'
 import { DeckService } from '../services/deckService'
+import type { Card } from '../types/card'
+import type { Deck, DeckCard } from '../types/deck'
 
 interface DeckBuilderProps {
   deck: Deck
@@ -29,7 +29,7 @@ export default function DeckBuilder({
 
   const handleExport = () => {
     const exportText = DeckService.exportDeckToMTGA(deck)
-    navigator.clipboard.writeText(exportText)
+    void navigator.clipboard.writeText(exportText)
     alert('デッキリストをクリップボードにコピーしました')
   }
 
@@ -55,13 +55,17 @@ export default function DeckBuilder({
             </div>
             <div class="flex gap-1">
               <button
-                onClick={() => handleAddCard(deckCard.card, location)}
+                onClick={() => {
+                  handleAddCard(deckCard.card, location)
+                }}
                 class="px-2 py-1 bg-green-500 text-white text-sm rounded hover:bg-green-600"
               >
                 +
               </button>
               <button
-                onClick={() => handleRemoveCard(deckCard.card.id, location)}
+                onClick={() => {
+                  handleRemoveCard(deckCard.card.id, location)
+                }}
                 class="px-2 py-1 bg-red-500 text-white text-sm rounded hover:bg-red-600"
               >
                 -
@@ -83,7 +87,9 @@ export default function DeckBuilder({
           <input
             type="text"
             value={deck.name}
-            onInput={(e) => handleDeckNameChange((e.target as HTMLInputElement).value)}
+            onInput={(e) => {
+              handleDeckNameChange((e.target as HTMLInputElement).value)
+            }}
             class="text-xl font-bold bg-transparent border-none outline-none focus:bg-gray-50 px-2 py-1 rounded"
           />
           <button
@@ -95,10 +101,10 @@ export default function DeckBuilder({
         </div>
         
         <div class="flex gap-4 text-sm">
-          <span class={`${stats.isValidMainDeck ? 'text-green-600' : 'text-red-600'}`}>
+          <span class={stats.isValidMainDeck ? 'text-green-600' : 'text-red-600'}>
             メインデッキ: {stats.mainDeckSize}/60
           </span>
-          <span class={`${stats.isValidSideboard ? 'text-green-600' : 'text-red-600'}`}>
+          <span class={stats.isValidSideboard ? 'text-green-600' : 'text-red-600'}>
             サイドボード: {stats.sideboardSize}/15
           </span>
         </div>

@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'hono/jsx'
+import { DeckService } from '../services/deckService'
 import type { Card } from '../types/card'
 import type { Deck } from '../types/deck'
 import CardSearch from './cardSearch'
 import DeckBuilder from './deckBuilder'
-import { DeckService } from '../services/deckService'
 
 export default function DeckBuilderApp() {
   const [deck, setDeck] = useState<Deck>(() => DeckService.createEmptyDeck())

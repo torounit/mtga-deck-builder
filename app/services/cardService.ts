@@ -5,15 +5,35 @@ export interface SearchOptions {
   pageSize?: number
 }
 
+interface ScryfallCard {
+  id: string
+  name: string
+  mana_cost?: string
+  type_line: string
+  oracle_text?: string
+  power?: string
+  toughness?: string
+  colors?: string[]
+  color_identity?: string[]
+  cmc: number
+  set: string
+  rarity: string
+  image_uris?: {
+    small: string
+    normal: string
+    large: string
+  }
+}
+
+interface ScryfallResponse {
+  data?: ScryfallCard[]
+  total_cards?: number
+  has_more?: boolean
+}
+
 const SCRYFALL_API_BASE = 'https://api.scryfall.com'
 
-export async function searchCards(
-  filters: CardSearchFilters,
-  options: SearchOptions = {}
-): Promise<CardSearchResult> {
-  const { page = 1, pageSize = 16 } = options
-
-  // Scryfall APIの検索クエリを構築
+function buildSearchQuery(filters: CardSearchFilters): string {
   const queryParts: string[] = []
 
   if (filters.name) {
@@ -40,7 +60,38 @@ export async function searchCards(
   // MTGA対応のカードのみ検索
   queryParts.push('game:arena')
 
-  const query = queryParts.join(' ')
+  return queryParts.join(' ')
+}
+
+function transformScryfallCard(cardData: ScryfallCard): Card {
+  return {
+    id: cardData.id,
+    name: cardData.name,
+    mana_cost: cardData.mana_cost ?? '',
+    type_line: cardData.type_line,
+    oracle_text: cardData.oracle_text ?? '',
+    power: cardData.power,
+    toughness: cardData.toughness,
+    colors: cardData.colors ?? [],
+    color_identity: cardData.color_identity ?? [],
+    cmc: cardData.cmc,
+    set: cardData.set,
+    rarity: cardData.rarity,
+    image_uris: cardData.image_uris ?? {
+      small: '',
+      normal: '',
+      large: ''
+    }
+  }
+}
+
+export async function searchCards(
+  filters: CardSearchFilters,
+  options: SearchOptions = {}
+): Promise<CardSearchResult> {
+  const { page = 1, pageSize = 16 } = options
+
+  const query = buildSearchQuery(filters)
   const url = new URL(`${SCRYFALL_API_BASE}/cards/search`)
   url.searchParams.set('q', query)
   url.searchParams.set('page', page.toString())
@@ -61,52 +112,13 @@ export async function searchCards(
       throw new Error(`Scryfall API error: ${String(response.status)}`)
     }
 
-    const data = await response.json()
-
-    // Scryfall APIのレスポンスを変換
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const data: ScryfallResponse = await response.json()
     const responseData = data.data ?? []
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-    const cards: Card[] = responseData
-      .slice(0, pageSize)
-      .map((cardData: any) => ({
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-        id: cardData.id,
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-        name: cardData.name,
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-        mana_cost: cardData.mana_cost ?? '',
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-        type_line: cardData.type_line,
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-        oracle_text: cardData.oracle_text ?? '',
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-        power: cardData.power,
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-        toughness: cardData.toughness,
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-        colors: cardData.colors ?? [],
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-        color_identity: cardData.color_identity ?? [],
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-        cmc: cardData.cmc,
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-        set: cardData.set,
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-        rarity: cardData.rarity,
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-        image_uris: cardData.image_uris ?? {
-          small: '',
-          normal: '',
-          large: ''
-        }
-      }))
+    const cards = responseData.slice(0, pageSize).map(transformScryfallCard)
 
     return {
       cards,
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       total_cards: data.total_cards ?? 0,
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       has_more: data.has_more ?? false
     }
   } catch (error) {

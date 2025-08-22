@@ -6,134 +6,151 @@ import {
   MAX_SIDEBOARD_SIZE
 } from '../types/deck'
 
+interface StoredDeck {
+  id: string
+  name: string
+  mainDeck: DeckCard[]
+  sideboard: DeckCard[]
+  createdAt: string
+  updatedAt: string
+}
+
 const STORAGE_KEY = 'mtga-deck-builder-deck'
 
+function isClientSide(): boolean {
+  return typeof window !== 'undefined'
+}
+
+function createEmptyDeck(): Deck {
+  return {
+    id: crypto.randomUUID(),
+    name: 'New Deck',
+    mainDeck: [],
+    sideboard: [],
+    createdAt: new Date(),
+    updatedAt: new Date()
+  }
+}
+
+function saveDeck(deck: Deck): void {
+  if (!isClientSide()) return
+
+  const deckToStore: StoredDeck = {
+    ...deck,
+    updatedAt: new Date().toISOString(),
+    createdAt: deck.createdAt.toISOString()
+  }
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(deckToStore))
+}
+
+function loadDeck(): Deck | null {
+  if (!isClientSide()) return null
+
+  const saved = localStorage.getItem(STORAGE_KEY)
+  if (!saved) return null
+
+  try {
+    const data = JSON.parse(saved) as StoredDeck
+    return {
+      ...data,
+      createdAt: new Date(data.createdAt),
+      updatedAt: new Date(data.updatedAt)
+    }
+  } catch {
+    return null
+  }
+}
+
 export const DeckService = {
-  createEmptyDeck(): Deck {
-    return {
-      id: crypto.randomUUID(),
-      name: 'New Deck',
-      mainDeck: [],
-      sideboard: [],
-      createdAt: new Date(),
-      updatedAt: new Date()
+  createEmptyDeck,
+  saveDeck,
+  loadDeck,
+
+  addCardToDeck: addCardToDeck,
+  removeCardFromDeck: removeCardFromDeck,
+  getDeckStats: getDeckStats,
+  exportDeckToMTGA: exportDeckToMTGA
+}
+
+function addCardToDeck(
+  deck: Deck,
+  card: Card,
+  location: 'main' | 'sideboard' = 'main'
+): Deck {
+  const targetDeck = location === 'main' ? deck.mainDeck : deck.sideboard
+  const existingCard = targetDeck.find((dc) => dc.card.id === card.id)
+
+  if (existingCard) {
+    // 既存のカードの枚数を増やす
+    if (existingCard.quantity < MAX_CARD_COPIES) {
+      existingCard.quantity++
     }
-  },
-
-  saveDeck(deck: Deck): void {
-    // クライアントサイドでのみ実行
-    if (typeof window !== 'undefined') {
-      deck.updatedAt = new Date()
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(deck))
+  } else {
+    // 新しいカードを追加
+    const newDeckCard: DeckCard = {
+      card,
+      quantity: 1
     }
-  },
+    targetDeck.push(newDeckCard)
+  }
 
-  loadDeck(): Deck | null {
-    // クライアントサイドでのみ実行
-    if (typeof window === 'undefined') {
-      return null
-    }
+  return { ...deck }
+}
 
-    const saved = localStorage.getItem(STORAGE_KEY)
-    if (!saved) return null
+function removeCardFromDeck(
+  deck: Deck,
+  cardId: string,
+  location: 'main' | 'sideboard'
+): Deck {
+  const targetDeck = location === 'main' ? deck.mainDeck : deck.sideboard
+  const cardIndex = targetDeck.findIndex((dc) => dc.card.id === cardId)
 
-    try {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const data = JSON.parse(saved)
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      return {
-        ...data,
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
-        createdAt: new Date(data.createdAt),
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
-        updatedAt: new Date(data.updatedAt)
-      }
-    } catch {
-      return null
-    }
-  },
-
-  addCardToDeck(
-    deck: Deck,
-    card: Card,
-    location: 'main' | 'sideboard' = 'main'
-  ): Deck {
-    const targetDeck = location === 'main' ? deck.mainDeck : deck.sideboard
-    const existingCard = targetDeck.find((dc) => dc.card.id === card.id)
-
-    if (existingCard) {
-      // 既存のカードの枚数を増やす
-      if (existingCard.quantity < MAX_CARD_COPIES) {
-        existingCard.quantity++
-      }
+  if (cardIndex >= 0) {
+    const deckCard = targetDeck[cardIndex]
+    if (deckCard.quantity > 1) {
+      deckCard.quantity--
     } else {
-      // 新しいカードを追加
-      const newDeckCard: DeckCard = {
-        card,
-        quantity: 1
-      }
-      targetDeck.push(newDeckCard)
+      targetDeck.splice(cardIndex, 1)
     }
+  }
 
-    return { ...deck }
-  },
+  return { ...deck }
+}
 
-  removeCardFromDeck(
-    deck: Deck,
-    cardId: string,
-    location: 'main' | 'sideboard'
-  ): Deck {
-    const targetDeck = location === 'main' ? deck.mainDeck : deck.sideboard
-    const cardIndex = targetDeck.findIndex((dc) => dc.card.id === cardId)
+export interface DeckStats {
+  mainDeckSize: number
+  sideboardSize: number
+  isValidMainDeck: boolean
+  isValidSideboard: boolean
+}
 
-    if (cardIndex >= 0) {
-      const deckCard = targetDeck[cardIndex]
-      if (deckCard.quantity > 1) {
-        deckCard.quantity--
-      } else {
-        targetDeck.splice(cardIndex, 1)
-      }
-    }
+function getDeckStats(deck: Deck): DeckStats {
+  const mainDeckSize = deck.mainDeck.reduce((sum, dc) => sum + dc.quantity, 0)
+  const sideboardSize = deck.sideboard.reduce((sum, dc) => sum + dc.quantity, 0)
 
-    return { ...deck }
-  },
+  return {
+    mainDeckSize,
+    sideboardSize,
+    isValidMainDeck: mainDeckSize >= MAX_MAIN_DECK_SIZE,
+    isValidSideboard: sideboardSize <= MAX_SIDEBOARD_SIZE
+  }
+}
 
-  getDeckStats(deck: Deck): {
-    mainDeckSize: number
-    sideboardSize: number
-    isValidMainDeck: boolean
-    isValidSideboard: boolean
-  } {
-    const mainDeckSize = deck.mainDeck.reduce((sum, dc) => sum + dc.quantity, 0)
-    const sideboardSize = deck.sideboard.reduce(
-      (sum, dc) => sum + dc.quantity,
-      0
-    )
+function exportDeckToMTGA(deck: Deck): string {
+  const lines: string[] = []
 
-    return {
-      mainDeckSize,
-      sideboardSize,
-      isValidMainDeck: mainDeckSize >= MAX_MAIN_DECK_SIZE,
-      isValidSideboard: sideboardSize <= MAX_SIDEBOARD_SIZE
-    }
-  },
+  lines.push('Deck')
+  deck.mainDeck.forEach((dc) => {
+    lines.push(`${String(dc.quantity)} ${dc.card.name}`)
+  })
 
-  exportDeckToMTGA(deck: Deck): string {
-    const lines: string[] = []
-
-    lines.push(`Deck`)
-    deck.mainDeck.forEach((dc) => {
+  if (deck.sideboard.length > 0) {
+    lines.push('')
+    lines.push('Sideboard')
+    deck.sideboard.forEach((dc) => {
       lines.push(`${String(dc.quantity)} ${dc.card.name}`)
     })
-
-    if (deck.sideboard.length > 0) {
-      lines.push('')
-      lines.push('Sideboard')
-      deck.sideboard.forEach((dc) => {
-        lines.push(`${String(dc.quantity)} ${dc.card.name}`)
-      })
-    }
-
-    return lines.join('\n')
   }
+
+  return lines.join('\n')
 }

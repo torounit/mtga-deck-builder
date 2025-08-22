@@ -1,6 +1,6 @@
 import { useState } from 'hono/jsx'
-import type { Card, CardSearchFilters } from '../types/card'
 import { searchCards } from '../services/cardService'
+import type { Card, CardSearchFilters } from '../types/card'
 
 interface CardSearchProps {
   onCardAdd?: (card: Card, location?: 'main' | 'sideboard') => void
@@ -12,7 +12,7 @@ export default function CardSearch({ onCardAdd }: CardSearchProps) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const handleSearch = async (e: Event) => {
+  const handleSearch = (e: Event) => {
     e.preventDefault()
     
     if (!searchQuery.trim()) return
@@ -20,19 +20,23 @@ export default function CardSearch({ onCardAdd }: CardSearchProps) {
     setLoading(true)
     setError(null)
 
-    try {
-      const filters: CardSearchFilters = {
-        name: searchQuery
+    const performSearch = async () => {
+      try {
+        const filters: CardSearchFilters = {
+          name: searchQuery
+        }
+        
+        const result = await searchCards(filters, { pageSize: 16 })
+        setCards(result.cards)
+      } catch (err) {
+        setError('カード検索中にエラーが発生しました')
+        console.error('Search error:', err)
+      } finally {
+        setLoading(false)
       }
-      
-      const result = await searchCards(filters, { pageSize: 16 })
-      setCards(result.cards)
-    } catch (err) {
-      setError('カード検索中にエラーが発生しました')
-      console.error('Search error:', err)
-    } finally {
-      setLoading(false)
     }
+
+    void performSearch()
   }
 
   return (
@@ -42,7 +46,9 @@ export default function CardSearch({ onCardAdd }: CardSearchProps) {
           <input
             type="text"
             value={searchQuery}
-            onInput={(e) => setSearchQuery((e.target as HTMLInputElement).value)}
+            onInput={(e) => {
+              setSearchQuery((e.target as HTMLInputElement).value)
+            }}
             placeholder="カード名を入力..."
             class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
@@ -65,7 +71,7 @@ export default function CardSearch({ onCardAdd }: CardSearchProps) {
       <div class="grid grid-cols-4 gap-4">
         {cards.map((card) => (
           <div key={card.id} class="border border-gray-200 rounded-lg p-3 hover:shadow-lg transition-shadow relative group">
-            {card.image_uris?.normal && (
+            {card.image_uris.normal && (
               <img
                 src={card.image_uris.normal}
                 alt={card.name}
@@ -79,13 +85,17 @@ export default function CardSearch({ onCardAdd }: CardSearchProps) {
             {onCardAdd && (
               <div class="flex gap-1">
                 <button
-                  onClick={() => onCardAdd(card, 'main')}
+                  onClick={() => {
+                    onCardAdd(card, 'main')
+                  }}
                   class="flex-1 px-2 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600"
                 >
                   メイン
                 </button>
                 <button
-                  onClick={() => onCardAdd(card, 'sideboard')}
+                  onClick={() => {
+                    onCardAdd(card, 'sideboard')
+                  }}
                   class="flex-1 px-2 py-1 bg-green-500 text-white text-xs rounded hover:bg-green-600"
                 >
                   サイド
