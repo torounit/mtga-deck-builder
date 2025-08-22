@@ -12,6 +12,13 @@ export default function CardSearch({ onCardAdd }: CardSearchProps) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  const handleDragStart = (e: DragEvent, card: Card) => {
+    if (e.dataTransfer) {
+      e.dataTransfer.setData('application/json', JSON.stringify(card))
+      e.dataTransfer.effectAllowed = 'copy'
+    }
+  }
+
   const handleSearch = (e: Event) => {
     e.preventDefault()
     
@@ -70,12 +77,19 @@ export default function CardSearch({ onCardAdd }: CardSearchProps) {
 
       <div class="grid grid-cols-4 gap-4">
         {cards.map((card) => (
-          <div key={card.id} class="border border-gray-200 rounded-lg p-3 hover:shadow-lg transition-shadow relative group">
+          <div 
+            key={card.id} 
+            class="border border-gray-200 rounded-lg p-3 hover:shadow-lg transition-shadow relative group cursor-move"
+            draggable="true"
+            onDragStart={(e) => {
+              handleDragStart(e as DragEvent, card)
+            }}
+          >
             {card.image_uris.normal && (
               <img
                 src={card.image_uris.normal}
                 alt={card.name}
-                class="w-full h-auto rounded mb-2"
+                class="w-full h-auto rounded mb-2 pointer-events-none"
               />
             )}
             <h3 class="font-semibold text-sm mb-1">{card.name}</h3>
