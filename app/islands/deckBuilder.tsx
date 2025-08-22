@@ -1,43 +1,30 @@
-import { useState, useEffect } from 'hono/jsx'
 import type { Deck, DeckCard } from '../types/deck'
 import type { Card } from '../types/card'
 import { DeckService } from '../services/deckService'
 
 interface DeckBuilderProps {
-  onCardAdd?: (card: Card) => void
+  deck: Deck
+  onCardAdd?: (card: Card, location?: 'main' | 'sideboard') => void
+  onCardRemove?: (cardId: string, location: 'main' | 'sideboard') => void
+  onDeckNameChange?: (name: string) => void
 }
 
-export default function DeckBuilder({ onCardAdd }: DeckBuilderProps) {
-  const [deck, setDeck] = useState<Deck>(() => DeckService.createEmptyDeck())
-  const [isClient, setIsClient] = useState(false)
-
-  useEffect(() => {
-    setIsClient(true)
-    // クライアントサイドでのみローカルストレージからロード
-    const savedDeck = DeckService.loadDeck()
-    if (savedDeck) {
-      setDeck(savedDeck)
-    }
-  }, [])
-
-  useEffect(() => {
-    if (isClient) {
-      DeckService.saveDeck(deck)
-    }
-  }, [deck, isClient])
-
+export default function DeckBuilder({ 
+  deck, 
+  onCardAdd, 
+  onCardRemove, 
+  onDeckNameChange 
+}: DeckBuilderProps) {
   const handleAddCard = (card: Card, location: 'main' | 'sideboard' = 'main') => {
-    const updatedDeck = DeckService.addCardToDeck(deck, card, location)
-    setDeck(updatedDeck)
+    onCardAdd?.(card, location)
   }
 
   const handleRemoveCard = (cardId: string, location: 'main' | 'sideboard') => {
-    const updatedDeck = DeckService.removeCardFromDeck(deck, cardId, location)
-    setDeck(updatedDeck)
+    onCardRemove?.(cardId, location)
   }
 
   const handleDeckNameChange = (name: string) => {
-    setDeck(prev => ({ ...prev, name }))
+    onDeckNameChange?.(name)
   }
 
   const handleExport = () => {

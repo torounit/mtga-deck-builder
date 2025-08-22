@@ -3,7 +3,7 @@ import type { Card, CardSearchFilters } from '../types/card'
 import { searchCards } from '../services/cardService'
 
 interface CardSearchProps {
-  onCardAdd?: (card: Card) => void
+  onCardAdd?: (card: Card, location?: 'main' | 'sideboard') => void
 }
 
 export default function CardSearch({ onCardAdd }: CardSearchProps) {
@@ -79,10 +79,16 @@ export default function CardSearch({ onCardAdd }: CardSearchProps) {
             {onCardAdd && (
               <div class="flex gap-1">
                 <button
-                  onClick={() => onCardAdd(card)}
-                  class="w-full px-2 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600"
+                  onClick={() => onCardAdd(card, 'main')}
+                  class="flex-1 px-2 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600"
                 >
                   メイン
+                </button>
+                <button
+                  onClick={() => onCardAdd(card, 'sideboard')}
+                  class="flex-1 px-2 py-1 bg-green-500 text-white text-xs rounded hover:bg-green-600"
+                >
+                  サイド
                 </button>
               </div>
             )}

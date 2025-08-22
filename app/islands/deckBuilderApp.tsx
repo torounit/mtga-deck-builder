@@ -1,4 +1,4 @@
-import { useState } from 'hono/jsx'
+import { useState, useEffect } from 'hono/jsx'
 import type { Card } from '../types/card'
 import type { Deck } from '../types/deck'
 import CardSearch from './cardSearch'
@@ -7,11 +7,35 @@ import { DeckService } from '../services/deckService'
 
 export default function DeckBuilderApp() {
   const [deck, setDeck] = useState<Deck>(() => DeckService.createEmptyDeck())
+  const [isClient, setIsClient] = useState(false)
 
-  const handleCardAdd = (card: Card) => {
-    const updatedDeck = DeckService.addCardToDeck(deck, card, 'main')
+  useEffect(() => {
+    setIsClient(true)
+    // クライアントサイドでのみローカルストレージからロード
+    const savedDeck = DeckService.loadDeck()
+    if (savedDeck) {
+      setDeck(savedDeck)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (isClient) {
+      DeckService.saveDeck(deck)
+    }
+  }, [deck, isClient])
+
+  const handleCardAdd = (card: Card, location: 'main' | 'sideboard' = 'main') => {
+    const updatedDeck = DeckService.addCardToDeck(deck, card, location)
     setDeck(updatedDeck)
-    DeckService.saveDeck(updatedDeck)
+  }
+
+  const handleCardRemove = (cardId: string, location: 'main' | 'sideboard') => {
+    const updatedDeck = DeckService.removeCardFromDeck(deck, cardId, location)
+    setDeck(updatedDeck)
+  }
+
+  const handleDeckNameChange = (name: string) => {
+    setDeck(prev => ({ ...prev, name }))
   }
 
   return (
@@ -20,7 +44,12 @@ export default function DeckBuilderApp() {
         <CardSearch onCardAdd={handleCardAdd} />
       </div>
       <div class="xl:col-span-1">
-        <DeckBuilder />
+        <DeckBuilder 
+          deck={deck}
+          onCardAdd={handleCardAdd}
+          onCardRemove={handleCardRemove}
+          onDeckNameChange={handleDeckNameChange}
+        />
       </div>
     </div>
   )
