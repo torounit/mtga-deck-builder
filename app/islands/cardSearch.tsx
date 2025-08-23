@@ -112,7 +112,7 @@ export default function CardSearch({ onCardAdd }: CardSearchProps) {
             onInput={(e) => {
               setSearchQuery((e.target as HTMLInputElement).value)
             }}
-            placeholder="カード名を入力..."
+            placeholder="カード名またはテキストを入力..."
             class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <button

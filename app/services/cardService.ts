@@ -37,7 +37,8 @@ function buildSearchQuery(filters: CardSearchFilters): string {
   const queryParts: string[] = []
 
   if (filters.name) {
-    queryParts.push(`name:"${filters.name}"`)
+    // カード名またはカードテキストで検索
+    queryParts.push(`(name:"${filters.name}" OR oracle:"${filters.name}")`)
   }
 
   if (filters.colors && filters.colors.length > 0) {
