@@ -35,20 +35,23 @@ describe('CardSearch Pagination', () => {
 
   it('should handle pagination state correctly', () => {
     // ページネーション状態のロジックテスト
-    const currentPage = 1
-    const totalPages = 4
+    function checkPaginationState(currentPage: number, totalPages: number) {
+      const isFirstPage = currentPage === 1
+      const isLastPage = currentPage === totalPages
+      
+      return { isFirstPage, isLastPage }
+    }
     
-    const isFirstPage = currentPage === 1
-    const isLastPage = currentPage === totalPages
+    const page1State = checkPaginationState(1, 4)
+    expect(page1State.isFirstPage).toBe(true)
+    expect(page1State.isLastPage).toBe(false)
     
-    expect(isFirstPage).toBe(true)
-    expect(isLastPage).toBe(false)
+    const page2State = checkPaginationState(2, 4)
+    expect(page2State.isFirstPage).toBe(false)
+    expect(page2State.isLastPage).toBe(false)
     
-    const page2 = 2
-    const isPage2First = page2 === 1
-    const isPage2Last = page2 === totalPages
-    
-    expect(isPage2First).toBe(false)
-    expect(isPage2Last).toBe(false)
+    const lastPageState = checkPaginationState(4, 4)
+    expect(lastPageState.isFirstPage).toBe(false)
+    expect(lastPageState.isLastPage).toBe(true)
   })
 })

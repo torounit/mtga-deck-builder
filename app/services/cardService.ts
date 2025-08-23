@@ -85,24 +85,33 @@ function transformScryfallCard(cardData: ScryfallCard): Card {
   }
 }
 
+// Scryfall APIのページサイズは175件固定
+const SCRYFALL_PAGE_SIZE = 175
+
 export async function searchCards(
   filters: CardSearchFilters,
   options: SearchOptions = {}
 ): Promise<CardSearchResult> {
   const { page = 1, pageSize = 16 } = options
 
+  // どのScryfall APIページから取得するかを計算
+  const scryfallPageStart =
+    Math.floor(((page - 1) * pageSize) / SCRYFALL_PAGE_SIZE) + 1
+  const offsetInScryfallPage = ((page - 1) * pageSize) % SCRYFALL_PAGE_SIZE
+
   const query = buildSearchQuery(filters)
   const url = new URL(`${SCRYFALL_API_BASE}/cards/search`)
   url.searchParams.set('q', query)
-  url.searchParams.set('page', page.toString())
+  url.searchParams.set('page', scryfallPageStart.toString())
   url.searchParams.set('format', 'json')
+  url.searchParams.set('order', 'name')
+  url.searchParams.set('dir', 'asc')
 
   try {
     const response = await fetch(url.toString())
 
     if (!response.ok) {
       if (response.status === 404) {
-        // 結果なしの場合
         return {
           cards: [],
           total_cards: 0,
@@ -114,12 +123,45 @@ export async function searchCards(
 
     const data: ScryfallResponse = await response.json()
     const responseData = data.data ?? []
-    const cards = responseData.slice(0, pageSize).map(transformScryfallCard)
+    const totalCards = data.total_cards ?? 0
+
+    // 複数のScryfall APIページが必要な場合の処理
+    let allCards = responseData
+
+    // 必要に応じて次のScryfall APIページも取得
+    const neededCards = pageSize
+    const availableInCurrentPage = SCRYFALL_PAGE_SIZE - offsetInScryfallPage
+
+    if (neededCards > availableInCurrentPage && data.has_more) {
+      // 次のScryfall APIページも取得
+      const nextUrl = new URL(`${SCRYFALL_API_BASE}/cards/search`)
+      nextUrl.searchParams.set('q', query)
+      nextUrl.searchParams.set('page', (scryfallPageStart + 1).toString())
+      nextUrl.searchParams.set('format', 'json')
+      nextUrl.searchParams.set('order', 'name')
+      nextUrl.searchParams.set('dir', 'asc')
+
+      const nextResponse = await fetch(nextUrl.toString())
+      if (nextResponse.ok) {
+        const nextData: ScryfallResponse = await nextResponse.json()
+        allCards = [...responseData, ...(nextData.data ?? [])]
+      }
+    }
+
+    // 指定されたページサイズで切り出し
+    const startIndex = offsetInScryfallPage
+    const endIndex = startIndex + pageSize
+    const paginatedCards = allCards.slice(startIndex, endIndex)
+    const cards = paginatedCards.map(transformScryfallCard)
+
+    // 総ページ数を計算してhas_moreを判定
+    const totalPages = Math.ceil(totalCards / pageSize)
+    const hasMore = page < totalPages
 
     return {
       cards,
-      total_cards: data.total_cards ?? 0,
-      has_more: data.has_more ?? false
+      total_cards: totalCards,
+      has_more: hasMore
     }
   } catch (error) {
     console.error('Failed to search cards:', error)

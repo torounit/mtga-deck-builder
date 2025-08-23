@@ -11,6 +11,11 @@ export default function CardSearch({ onCardAdd }: CardSearchProps) {
   const [cards, setCards] = useState<Card[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalCards, setTotalCards] = useState(0)
+  const [hasMore, setHasMore] = useState(false)
+  
+  const pageSize = 16
 
   const handleDragStart = (e: DragEvent, card: Card) => {
     if (e.dataTransfer) {
@@ -19,31 +24,47 @@ export default function CardSearch({ onCardAdd }: CardSearchProps) {
     }
   }
 
-  const handleSearch = (e: Event) => {
-    e.preventDefault()
-    
+  const performSearch = async (page: number = 1) => {
     if (!searchQuery.trim()) return
 
     setLoading(true)
     setError(null)
 
-    const performSearch = async () => {
-      try {
-        const filters: CardSearchFilters = {
-          name: searchQuery
-        }
-        
-        const result = await searchCards(filters, { pageSize: 16 })
-        setCards(result.cards)
-      } catch (err) {
-        setError('カード検索中にエラーが発生しました')
-        console.error('Search error:', err)
-      } finally {
-        setLoading(false)
+    try {
+      const filters: CardSearchFilters = {
+        name: searchQuery
       }
+      
+      const result = await searchCards(filters, { page, pageSize })
+      setCards(result.cards)
+      setTotalCards(result.total_cards)
+      setHasMore(result.has_more)
+      setCurrentPage(page)
+      
+    } catch (err) {
+      setError('カード検索中にエラーが発生しました')
+      console.error('Search error:', err)
+    } finally {
+      setLoading(false)
     }
+  }
 
-    void performSearch()
+  const handleSearch = (e: Event) => {
+    e.preventDefault()
+    setCurrentPage(1)
+    void performSearch(1)
+  }
+
+  const handleNextPage = () => {
+    const nextPage = currentPage + 1
+    void performSearch(nextPage)
+  }
+
+  const handlePreviousPage = () => {
+    const prevPage = currentPage - 1
+    if (prevPage >= 1) {
+      void performSearch(prevPage)
+    }
   }
 
   return (
@@ -123,6 +144,31 @@ export default function CardSearch({ onCardAdd }: CardSearchProps) {
       {cards.length === 0 && !loading && searchQuery && (
         <div class="text-center text-gray-500 mt-8">
           検索結果が見つかりませんでした
+        </div>
+      )}
+
+      {/* ページネーション */}
+      {totalCards > 0 && (
+        <div class="flex justify-center items-center mt-6 gap-4">
+          <button
+            onClick={handlePreviousPage}
+            disabled={currentPage === 1 || loading}
+            class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
+          >
+            前のページ
+          </button>
+          
+          <span class="text-gray-700">
+            {currentPage} / {Math.ceil(totalCards / pageSize)} ページ ({totalCards}件中 {Math.min((currentPage - 1) * pageSize + 1, totalCards)}-{Math.min(currentPage * pageSize, totalCards)}件目)
+          </span>
+          
+          <button
+            onClick={handleNextPage}
+            disabled={!hasMore || loading}
+            class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
+          >
+            次のページ
+          </button>
         </div>
       )}
     </div>
