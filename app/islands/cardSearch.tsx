@@ -1,4 +1,4 @@
-import { useState } from 'hono/jsx'
+import { useState, useEffect } from 'hono/jsx'
 import { searchCards } from '../services/cardService'
 import type { Card, CardSearchFilters } from '../types/card'
 
@@ -11,13 +11,14 @@ export default function CardSearch({ onCardAdd }: CardSearchProps) {
   const [selectedColors, setSelectedColors] = useState<string[]>([])
   const [selectedType, setSelectedType] = useState('')
   const [selectedCmc, setSelectedCmc] = useState<number | undefined>(undefined)
-  const [selectedFormat, setSelectedFormat] = useState('')
+  const [selectedFormat, setSelectedFormat] = useState('standard')
   const [cards, setCards] = useState<Card[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
   const [totalCards, setTotalCards] = useState(0)
   const [hasMore, setHasMore] = useState(false)
+  const [isInitialLoad, setIsInitialLoad] = useState(true)
   
   const pageSize = 16
   
@@ -46,7 +47,16 @@ export default function CardSearch({ onCardAdd }: CardSearchProps) {
     })
   }
 
+  // 初期ロード時のスタンダード一覧表示
+  useEffect(() => {
+    if (isInitialLoad) {
+      setIsInitialLoad(false)
+      void performSearch(1)
+    }
+  }, [])
+
   const performSearch = async (page: number = 1) => {
+    // フォーマットが選択されている場合は検索を実行
     if (!searchQuery.trim() && selectedColors.length === 0 && !selectedType && selectedCmc === undefined && !selectedFormat) {
       return
     }
