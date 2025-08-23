@@ -25,7 +25,7 @@
 
 ### レイアウト
 
-```marmaid
+```mermaid
 block-beta
   columns 4
   block:cards:3
