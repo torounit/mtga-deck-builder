@@ -232,13 +232,7 @@ export default function CardSearch({ onCardAdd }: CardSearchProps) {
                 <option value="">すべてのフォーマット</option>
                 <option value="standard">スタンダード</option>
                 <option value="pioneer">パイオニア</option>
-                <option value="modern">モダン</option>
-                <option value="legacy">レガシー</option>
-                <option value="vintage">ヴィンテージ</option>
-                <option value="commander">統率者</option>
-                <option value="brawl">ブロール</option>
                 <option value="historic">ヒストリック</option>
-                <option value="explorer">エクスプローラー</option>
                 <option value="alchemy">アルケミー</option>
               </select>
             </div>
