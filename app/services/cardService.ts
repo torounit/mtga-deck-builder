@@ -23,6 +23,19 @@ interface ScryfallCard {
     normal: string
     large: string
   }
+  card_faces?: {
+    name: string
+    mana_cost?: string
+    type_line: string
+    oracle_text?: string
+    power?: string
+    toughness?: string
+    image_uris?: {
+      small: string
+      normal: string
+      large: string
+    }
+  }[]
 }
 
 interface ScryfallResponse {
@@ -69,6 +82,12 @@ function buildSearchQuery(filters: CardSearchFilters): string {
 }
 
 function transformScryfallCard(cardData: ScryfallCard): Card {
+  // 両面カードの場合はcard_facesから画像を取得
+  let imageUris = cardData.image_uris
+  if (!imageUris && cardData.card_faces && cardData.card_faces.length > 0) {
+    imageUris = cardData.card_faces[0].image_uris
+  }
+
   return {
     id: cardData.id,
     name: cardData.name,
@@ -82,7 +101,7 @@ function transformScryfallCard(cardData: ScryfallCard): Card {
     cmc: cardData.cmc,
     set: cardData.set,
     rarity: cardData.rarity,
-    image_uris: cardData.image_uris ?? {
+    image_uris: imageUris ?? {
       small: '',
       normal: '',
       large: ''
