@@ -19,9 +19,9 @@ export default function CardSearch({ onCardAdd }: CardSearchProps) {
   const [totalCards, setTotalCards] = useState(0)
   const [hasMore, setHasMore] = useState(false)
   const [isInitialLoad, setIsInitialLoad] = useState(true)
-  
+
   const pageSize = 16
-  
+
   const colors = [
     { code: 'W', name: '白', color: 'bg-yellow-100 text-yellow-800' },
     { code: 'U', name: '青', color: 'bg-blue-100 text-blue-800' },
@@ -49,11 +49,20 @@ export default function CardSearch({ onCardAdd }: CardSearchProps) {
 
   // 初期ロード時のスタンダード一覧表示
   useEffect(() => {
+    console.log('Initial load, selectedFormat:', selectedFormat)
     if (isInitialLoad) {
       setIsInitialLoad(false)
       void performSearch(1)
     }
   }, [])
+
+  // フォーマットセレクトの強制同期
+  useEffect(() => {
+    const selectElement = document.querySelector('select[value="' + selectedFormat + '"]') as HTMLSelectElement
+    if (selectElement && selectElement.value !== selectedFormat) {
+      selectElement.value = selectedFormat
+    }
+  }, [selectedFormat])
 
   // フィルターが変更されたら即座に検索実行
   useEffect(() => {
@@ -86,7 +95,7 @@ export default function CardSearch({ onCardAdd }: CardSearchProps) {
 
     try {
       const filters: CardSearchFilters = {}
-      
+
       if (searchQuery.trim()) {
         filters.name = searchQuery
       }
@@ -102,13 +111,13 @@ export default function CardSearch({ onCardAdd }: CardSearchProps) {
       if (selectedFormat) {
         filters.format = selectedFormat
       }
-      
+
       const result = await searchCards(filters, { page, pageSize })
       setCards(result.cards)
       setTotalCards(result.total_cards)
       setHasMore(result.has_more)
       setCurrentPage(page)
-      
+
     } catch (err) {
       setError('カード検索中にエラーが発生しました')
       console.error('Search error:', err)
@@ -161,7 +170,7 @@ export default function CardSearch({ onCardAdd }: CardSearchProps) {
         {/* 高度な検索フィルター */}
         <div class="bg-gray-50 p-4 rounded-lg space-y-4">
           <h3 class="font-medium text-gray-700">詳細フィルター</h3>
-          
+
           {/* 色選択 */}
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">色</label>
@@ -226,7 +235,12 @@ export default function CardSearch({ onCardAdd }: CardSearchProps) {
               <label class="block text-sm font-medium text-gray-700 mb-2">フォーマット</label>
               <select
                 value={selectedFormat}
-                onChange={(e) => { setSelectedFormat((e.target as HTMLSelectElement).value); }}
+                defaultValue="standard"
+                onChange={(e) => { 
+                  const newFormat = (e.target as HTMLSelectElement).value
+                  console.log('Format changed to:', newFormat)
+                  setSelectedFormat(newFormat)
+                }}
                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="">すべてのフォーマット</option>
@@ -248,8 +262,8 @@ export default function CardSearch({ onCardAdd }: CardSearchProps) {
 
       <div class="grid grid-cols-4 gap-4">
         {cards.map((card) => (
-          <div 
-            key={card.id} 
+          <div
+            key={card.id}
             class="border border-gray-200 rounded-lg p-3 hover:shadow-lg transition-shadow relative group cursor-move"
             draggable="true"
             onDragStart={(e: DragEvent) => {
@@ -266,7 +280,7 @@ export default function CardSearch({ onCardAdd }: CardSearchProps) {
             <h3 class="font-semibold text-sm mb-1">{card.name}</h3>
             <p class="text-xs text-gray-600 mb-1">{card.mana_cost}</p>
             <p class="text-xs text-gray-500 mb-2">{card.type_line}</p>
-            
+
             {onCardAdd && (
               <div class="flex gap-1">
                 <button
@@ -307,11 +321,11 @@ export default function CardSearch({ onCardAdd }: CardSearchProps) {
           >
             前のページ
           </button>
-          
+
           <span class="text-gray-700">
             {currentPage} / {Math.ceil(totalCards / pageSize)} ページ ({totalCards}件中 {Math.min((currentPage - 1) * pageSize + 1, totalCards)}-{Math.min(currentPage * pageSize, totalCards)}件目)
           </span>
-          
+
           <button
             onClick={handleNextPage}
             disabled={!hasMore || loading}
