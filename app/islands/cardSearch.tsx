@@ -49,20 +49,11 @@ export default function CardSearch({ onCardAdd }: CardSearchProps) {
 
   // 初期ロード時のスタンダード一覧表示
   useEffect(() => {
-    console.log('Initial load, selectedFormat:', selectedFormat)
     if (isInitialLoad) {
       setIsInitialLoad(false)
       void performSearch(1)
     }
   }, [])
-
-  // フォーマットセレクトの強制同期
-  useEffect(() => {
-    const selectElement = document.querySelector('select[value="' + selectedFormat + '"]') as HTMLSelectElement
-    if (selectElement && selectElement.value !== selectedFormat) {
-      selectElement.value = selectedFormat
-    }
-  }, [selectedFormat])
 
   // フィルターが変更されたら即座に検索実行
   useEffect(() => {
@@ -233,22 +224,64 @@ export default function CardSearch({ onCardAdd }: CardSearchProps) {
             {/* フォーマット選択 */}
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">フォーマット</label>
-              <select
-                value={selectedFormat}
-                defaultValue="standard"
-                onChange={(e) => { 
-                  const newFormat = (e.target as HTMLSelectElement).value
-                  console.log('Format changed to:', newFormat)
-                  setSelectedFormat(newFormat)
-                }}
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="">すべてのフォーマット</option>
-                <option value="standard">スタンダード</option>
-                <option value="pioneer">パイオニア</option>
-                <option value="historic">ヒストリック</option>
-                <option value="alchemy">アルケミー</option>
-              </select>
+              <div class="space-y-2">
+                <label class="flex items-center">
+                  <input
+                    type="radio"
+                    name="format"
+                    value="standard"
+                    checked={selectedFormat === 'standard'}
+                    onChange={(e) => {
+                      const newFormat = (e.target as HTMLInputElement).value
+                      setSelectedFormat(newFormat)
+                    }}
+                    class="mr-2"
+                  />
+                  <span>スタンダード</span>
+                </label>
+                <label class="flex items-center">
+                  <input
+                    type="radio"
+                    name="format"
+                    value="pioneer"
+                    checked={selectedFormat === 'pioneer'}
+                    onChange={(e) => {
+                      const newFormat = (e.target as HTMLInputElement).value
+                      setSelectedFormat(newFormat)
+                    }}
+                    class="mr-2"
+                  />
+                  <span>パイオニア</span>
+                </label>
+                <label class="flex items-center">
+                  <input
+                    type="radio"
+                    name="format"
+                    value="historic"
+                    checked={selectedFormat === 'historic'}
+                    onChange={(e) => {
+                      const newFormat = (e.target as HTMLInputElement).value
+                      setSelectedFormat(newFormat)
+                    }}
+                    class="mr-2"
+                  />
+                  <span>ヒストリック</span>
+                </label>
+                <label class="flex items-center">
+                  <input
+                    type="radio"
+                    name="format"
+                    value="alchemy"
+                    checked={selectedFormat === 'alchemy'}
+                    onChange={(e) => {
+                      const newFormat = (e.target as HTMLInputElement).value
+                      setSelectedFormat(newFormat)
+                    }}
+                    class="mr-2"
+                  />
+                  <span>アルケミー</span>
+                </label>
+              </div>
             </div>
           </div>
         </div>
