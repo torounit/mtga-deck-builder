@@ -1,16 +1,16 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import * as cardService from '../../services/cardService'
+import { describe, test, expect, vi, beforeEach } from 'vitest'
+import * as cardService from '../cardService'
 
 // cardServiceをモック化
-vi.mock('../../services/cardService')
+vi.mock('../cardService')
 const mockSearchCards = vi.mocked(cardService.searchCards)
 
-describe('CardSearch Advanced Filters', () => {
+describe('CardService - 高度な検索フィルター', () => {
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
-  it('should search by colors', async () => {
+  test('色で検索ができる', async () => {
     mockSearchCards.mockResolvedValue({
       cards: [],
       total_cards: 0,
@@ -23,7 +23,7 @@ describe('CardSearch Advanced Filters', () => {
     expect(mockSearchCards).toHaveBeenCalledWith(filters)
   })
 
-  it('should search by type', async () => {
+  test('タイプで検索ができる', async () => {
     mockSearchCards.mockResolvedValue({
       cards: [],
       total_cards: 0,
@@ -36,7 +36,7 @@ describe('CardSearch Advanced Filters', () => {
     expect(mockSearchCards).toHaveBeenCalledWith(filters)
   })
 
-  it('should search by converted mana cost', async () => {
+  test('マナコストで検索ができる', async () => {
     mockSearchCards.mockResolvedValue({
       cards: [],
       total_cards: 0,
@@ -49,7 +49,7 @@ describe('CardSearch Advanced Filters', () => {
     expect(mockSearchCards).toHaveBeenCalledWith(filters)
   })
 
-  it('should search by format', async () => {
+  test('フォーマットで検索ができる', async () => {
     mockSearchCards.mockResolvedValue({
       cards: [],
       total_cards: 0,
@@ -62,7 +62,7 @@ describe('CardSearch Advanced Filters', () => {
     expect(mockSearchCards).toHaveBeenCalledWith(filters)
   })
 
-  it('should combine multiple search filters', async () => {
+  test('複数の検索フィルターを組み合わせて検索ができる', async () => {
     mockSearchCards.mockResolvedValue({
       cards: [],
       total_cards: 0,
