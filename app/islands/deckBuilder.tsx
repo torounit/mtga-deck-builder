@@ -118,8 +118,8 @@ export default function DeckBuilder({
     maxSize: number
   ) => (
     <div 
-      class={`bg-white rounded-lg shadow p-4 min-h-96 transition-colors ${
-        dragOverLocation === location ? 'bg-blue-50 border-2 border-blue-300' : ''
+      class={`bg-white rounded-lg shadow p-4 min-h-96 transition-colors border-2 ${
+        dragOverLocation === location ? 'bg-blue-50 border-blue-300' : 'border-transparent'
       }`}
       onDragOver={(e: DragEvent) => {
         handleDragOver(e, location)
@@ -132,7 +132,7 @@ export default function DeckBuilder({
       <h3 class="text-lg font-semibold mb-3">
         {title} ({cards.reduce((sum, dc) => sum + dc.quantity, 0)}/{maxSize})
       </h3>
-      <div class="space-y-2 max-h-96 overflow-y-auto">
+      <div class="space-y-2">
         {cards.map((deckCard) => (
           <div 
             key={deckCard.card.id} 
