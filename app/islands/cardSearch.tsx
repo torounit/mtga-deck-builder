@@ -55,6 +55,26 @@ export default function CardSearch({ onCardAdd }: CardSearchProps) {
     }
   }, [])
 
+  // フィルターが変更されたら即座に検索実行
+  useEffect(() => {
+    if (!isInitialLoad) {
+      setCurrentPage(1)
+      void performSearch(1)
+    }
+  }, [selectedColors, selectedType, selectedCmc, selectedFormat])
+
+  // 検索クエリが変更されたら500ms後に検索実行（デバウンス）
+  useEffect(() => {
+    if (!isInitialLoad) {
+      const timeoutId = setTimeout(() => {
+        setCurrentPage(1)
+        void performSearch(1)
+      }, 500)
+
+      return () => clearTimeout(timeoutId)
+    }
+  }, [searchQuery])
+
   const performSearch = async (page: number = 1) => {
     // フォーマットが選択されている場合は検索を実行
     if (!searchQuery.trim() && selectedColors.length === 0 && !selectedType && selectedCmc === undefined && !selectedFormat) {
