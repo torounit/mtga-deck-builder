@@ -11,6 +11,7 @@ export default function CardSearch({ onCardAdd }: CardSearchProps) {
   const [selectedColors, setSelectedColors] = useState<string[]>([])
   const [selectedType, setSelectedType] = useState('')
   const [selectedCmc, setSelectedCmc] = useState<number | undefined>(undefined)
+  const [selectedFormat, setSelectedFormat] = useState('')
   const [cards, setCards] = useState<Card[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -46,7 +47,7 @@ export default function CardSearch({ onCardAdd }: CardSearchProps) {
   }
 
   const performSearch = async (page: number = 1) => {
-    if (!searchQuery.trim() && selectedColors.length === 0 && !selectedType && selectedCmc === undefined) {
+    if (!searchQuery.trim() && selectedColors.length === 0 && !selectedType && selectedCmc === undefined && !selectedFormat) {
       return
     }
 
@@ -67,6 +68,9 @@ export default function CardSearch({ onCardAdd }: CardSearchProps) {
       }
       if (selectedCmc !== undefined) {
         filters.cmc = selectedCmc
+      }
+      if (selectedFormat) {
+        filters.format = selectedFormat
       }
       
       const result = await searchCards(filters, { page, pageSize })
@@ -149,9 +153,9 @@ export default function CardSearch({ onCardAdd }: CardSearchProps) {
             </div>
           </div>
 
-          {/* タイプ選択 */}
-          <div class="flex gap-4">
-            <div class="flex-1">
+          {/* タイプ・マナコスト・フォーマット選択 */}
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">タイプ</label>
               <select
                 value={selectedType}
@@ -170,7 +174,7 @@ export default function CardSearch({ onCardAdd }: CardSearchProps) {
             </div>
 
             {/* マナコスト選択 */}
-            <div class="flex-1">
+            <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">マナコスト</label>
               <select
                 value={selectedCmc ?? ''}
@@ -184,6 +188,28 @@ export default function CardSearch({ onCardAdd }: CardSearchProps) {
                 {Array.from({ length: 16 }, (_, i) => (
                   <option key={i} value={i}>{i}</option>
                 ))}
+              </select>
+            </div>
+
+            {/* フォーマット選択 */}
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">フォーマット</label>
+              <select
+                value={selectedFormat}
+                onChange={(e) => { setSelectedFormat((e.target as HTMLSelectElement).value); }}
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">すべてのフォーマット</option>
+                <option value="standard">スタンダード</option>
+                <option value="pioneer">パイオニア</option>
+                <option value="modern">モダン</option>
+                <option value="legacy">レガシー</option>
+                <option value="vintage">ヴィンテージ</option>
+                <option value="commander">統率者</option>
+                <option value="brawl">ブロール</option>
+                <option value="historic">ヒストリック</option>
+                <option value="explorer">エクスプローラー</option>
+                <option value="alchemy">アルケミー</option>
               </select>
             </div>
           </div>

@@ -24,6 +24,7 @@ export interface CardSearchFilters {
   type?: string
   cmc?: number
   set?: string
+  format?: string
 }
 
 export interface CardSearchResult {

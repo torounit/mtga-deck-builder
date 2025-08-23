@@ -58,6 +58,10 @@ function buildSearchQuery(filters: CardSearchFilters): string {
     queryParts.push(`set:"${filters.set}"`)
   }
 
+  if (filters.format) {
+    queryParts.push(`format:${filters.format}`)
+  }
+
   // MTGA対応のカードのみ検索
   queryParts.push('game:arena')
 

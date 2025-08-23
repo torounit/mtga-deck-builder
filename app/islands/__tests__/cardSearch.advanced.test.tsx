@@ -49,6 +49,19 @@ describe('CardSearch Advanced Filters', () => {
     expect(mockSearchCards).toHaveBeenCalledWith(filters)
   })
 
+  it('should search by format', async () => {
+    mockSearchCards.mockResolvedValue({
+      cards: [],
+      total_cards: 0,
+      has_more: false
+    })
+
+    const filters = { format: 'standard' }
+    await cardService.searchCards(filters)
+
+    expect(mockSearchCards).toHaveBeenCalledWith(filters)
+  })
+
   it('should combine multiple search filters', async () => {
     mockSearchCards.mockResolvedValue({
       cards: [],
@@ -60,7 +73,8 @@ describe('CardSearch Advanced Filters', () => {
       name: 'Lightning',
       colors: ['R'],
       type: 'Instant',
-      cmc: 1
+      cmc: 1,
+      format: 'standard'
     }
     await cardService.searchCards(filters)
 
