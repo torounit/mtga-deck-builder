@@ -1,9 +1,9 @@
-import { describe, it, expect } from 'vitest'
-import { searchCards } from '../app/services/cardService'
-import type { CardSearchFilters } from '../app/types/card'
+import { describe, test, expect } from 'vitest'
+import type { CardSearchFilters } from '../../types/card'
+import { searchCards } from '../cardService'
 
-describe('Card Search Service', () => {
-  it('should search cards by name', async () => {
+describe('CardService', () => {
+  test('カード名で検索ができる', async () => {
     const filters: CardSearchFilters = { name: 'Lightning' }
     const result = await searchCards(filters)
 
@@ -13,7 +13,7 @@ describe('Card Search Service', () => {
     expect(result.total_cards).toBeGreaterThan(0)
   })
 
-  it('should search cards with pagination', async () => {
+  test('ページネーションでカード検索ができる', async () => {
     const filters: CardSearchFilters = { name: 'Island' }
     const result = await searchCards(filters, { page: 1, pageSize: 16 })
 
@@ -22,7 +22,7 @@ describe('Card Search Service', () => {
     expect(result.total_cards).toBeGreaterThan(0)
   })
 
-  it('should filter cards by color', async () => {
+  test('色でカードをフィルターできる', async () => {
     const filters: CardSearchFilters = { colors: ['R'] }
     const result = await searchCards(filters)
 
@@ -32,7 +32,7 @@ describe('Card Search Service', () => {
     })
   })
 
-  it('should filter cards by converted mana cost', async () => {
+  test('マナコストでカードをフィルターできる', async () => {
     const filters: CardSearchFilters = { cmc: 3 }
     const result = await searchCards(filters)
 
