@@ -81,9 +81,13 @@ function addCardToDeck(
   const targetDeck = location === 'main' ? deck.mainDeck : deck.sideboard
   const existingCard = targetDeck.find((dc) => dc.card.id === card.id)
 
+  // Basic Landかどうかを判定
+  const isBasicLand = card.type_line.includes('Basic Land')
+
   if (existingCard) {
     // 既存のカードの枚数を増やす
-    if (existingCard.quantity < MAX_CARD_COPIES) {
+    // Basic Landは制限なし、その他のカードは4枚まで
+    if (isBasicLand || existingCard.quantity < MAX_CARD_COPIES) {
       existingCard.quantity++
     }
   } else {
