@@ -71,7 +71,9 @@ export default function CardSearch({ onCardAdd }: CardSearchProps) {
         void performSearch(1)
       }, 500)
 
-      return () => clearTimeout(timeoutId)
+      return () => {
+        clearTimeout(timeoutId)
+      }
     }
   }, [searchQuery])
 
