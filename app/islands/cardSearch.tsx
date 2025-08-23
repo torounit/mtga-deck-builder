@@ -102,8 +102,8 @@ export default function CardSearch({ onCardAdd }: CardSearchProps) {
             key={card.id} 
             class="border border-gray-200 rounded-lg p-3 hover:shadow-lg transition-shadow relative group cursor-move"
             draggable="true"
-            onDragStart={(e) => {
-              handleDragStart(e as DragEvent, card)
+            onDragStart={(e: DragEvent) => {
+              handleDragStart(e, card)
             }}
           >
             {card.image_uris.normal && (

@@ -121,12 +121,12 @@ export default function DeckBuilder({
       class={`bg-white rounded-lg shadow p-4 min-h-96 transition-colors ${
         dragOverLocation === location ? 'bg-blue-50 border-2 border-blue-300' : ''
       }`}
-      onDragOver={(e) => {
-        handleDragOver(e as DragEvent, location)
+      onDragOver={(e: DragEvent) => {
+        handleDragOver(e, location)
       }}
       onDragLeave={handleDragLeave}
-      onDrop={(e) => {
-        handleCardDrop(e as DragEvent, location)
+      onDrop={(e: DragEvent) => {
+        handleCardDrop(e, location)
       }}
     >
       <h3 class="text-lg font-semibold mb-3">
@@ -138,8 +138,8 @@ export default function DeckBuilder({
             key={deckCard.card.id} 
             class="flex items-center justify-between p-2 border rounded hover:bg-gray-50 cursor-move"
             draggable="true"
-            onDragStart={(e) => {
-              handleCardDragStart(e as DragEvent, deckCard, location)
+            onDragStart={(e: DragEvent) => {
+              handleCardDragStart(e, deckCard, location)
             }}
           >
             <div class="flex-1 pointer-events-none">
