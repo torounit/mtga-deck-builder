@@ -221,7 +221,7 @@ export default function DeckBuilder({
         </div>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="space-y-6">
         {renderDeckSection('メインデッキ', deck.mainDeck, 'main', 60)}
         {renderDeckSection('サイドボード', deck.sideboard, 'sideboard', 15)}
       </div>
