@@ -68,6 +68,7 @@ export const DeckService = {
 
   addCardToDeck: addCardToDeck,
   removeCardFromDeck: removeCardFromDeck,
+  moveCardBetweenDecks: moveCardBetweenDecks,
   getDeckStats: getDeckStats,
   exportDeckToMTGA: exportDeckToMTGA
 }
@@ -133,6 +134,58 @@ function getDeckStats(deck: Deck): DeckStats {
     sideboardSize,
     isValidMainDeck: mainDeckSize >= MAX_MAIN_DECK_SIZE,
     isValidSideboard: sideboardSize <= MAX_SIDEBOARD_SIZE
+  }
+}
+
+function moveCardBetweenDecks(
+  deck: Deck,
+  cardId: string,
+  fromLocation: 'main' | 'sideboard',
+  toLocation: 'main' | 'sideboard',
+  quantity: number = 1
+): Deck {
+  if (fromLocation === toLocation) {
+    return { ...deck }
+  }
+
+  // 新しい配列を作成
+  const newMainDeck = [...deck.mainDeck]
+  const newSideboard = [...deck.sideboard]
+
+  const fromDeck = fromLocation === 'main' ? newMainDeck : newSideboard
+  const toDeck = toLocation === 'main' ? newMainDeck : newSideboard
+
+  const fromCardIndex = fromDeck.findIndex((dc) => dc.card.id === cardId)
+  if (fromCardIndex === -1) {
+    return { ...deck }
+  }
+
+  const fromCard = fromDeck[fromCardIndex]
+  const moveQuantity = Math.min(quantity, fromCard.quantity)
+
+  // 移動元から枚数を減らす
+  if (fromCard.quantity <= moveQuantity) {
+    fromDeck.splice(fromCardIndex, 1)
+  } else {
+    fromCard.quantity -= moveQuantity
+  }
+
+  // 移動先に追加
+  const toCardIndex = toDeck.findIndex((dc) => dc.card.id === cardId)
+  if (toCardIndex >= 0) {
+    toDeck[toCardIndex].quantity += moveQuantity
+  } else {
+    toDeck.push({
+      card: fromCard.card,
+      quantity: moveQuantity
+    })
+  }
+
+  // 新しいdeckオブジェクトを返す
+  return {
+    ...deck,
+    mainDeck: newMainDeck,
+    sideboard: newSideboard
   }
 }
 

@@ -34,6 +34,16 @@ export default function DeckBuilderApp() {
     setDeck(updatedDeck)
   }
 
+  const handleCardMove = (
+    cardId: string, 
+    fromLocation: 'main' | 'sideboard', 
+    toLocation: 'main' | 'sideboard',
+    quantity: number = 1
+  ) => {
+    const updatedDeck = DeckService.moveCardBetweenDecks(deck, cardId, fromLocation, toLocation, quantity)
+    setDeck(updatedDeck)
+  }
+
   const handleDeckNameChange = (name: string) => {
     setDeck(prev => ({ ...prev, name }))
   }
@@ -48,6 +58,7 @@ export default function DeckBuilderApp() {
           deck={deck}
           onCardAdd={handleCardAdd}
           onCardRemove={handleCardRemove}
+          onCardMove={handleCardMove}
           onDeckNameChange={handleDeckNameChange}
         />
       </div>

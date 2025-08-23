@@ -13,6 +13,7 @@ interface DeckBuilderProps {
   deck: Deck
   onCardAdd?: (card: Card, location?: 'main' | 'sideboard') => void
   onCardRemove?: (cardId: string, location: 'main' | 'sideboard') => void
+  onCardMove?: (cardId: string, fromLocation: 'main' | 'sideboard', toLocation: 'main' | 'sideboard', quantity?: number) => void
   onDeckNameChange?: (name: string) => void
 }
 
@@ -20,6 +21,7 @@ export default function DeckBuilder({
   deck, 
   onCardAdd, 
   onCardRemove, 
+  onCardMove,
   onDeckNameChange 
 }: DeckBuilderProps) {
   const [dragOverLocation, setDragOverLocation] = useState<'main' | 'sideboard' | null>(null)
@@ -38,7 +40,19 @@ export default function DeckBuilder({
 
   const handleDragOver = (e: DragEvent, location: 'main' | 'sideboard') => {
     e.preventDefault()
-    e.dataTransfer && (e.dataTransfer.dropEffect = 'copy')
+    
+    // effectAllowedに基づいてdropEffectを設定
+    if (e.dataTransfer) {
+      const effectAllowed = e.dataTransfer.effectAllowed
+      if (effectAllowed === 'move') {
+        e.dataTransfer.dropEffect = 'move'
+      } else if (effectAllowed === 'copy') {
+        e.dataTransfer.dropEffect = 'copy'
+      } else {
+        e.dataTransfer.dropEffect = 'copy'
+      }
+    }
+    
     setDragOverLocation(location)
   }
 
@@ -49,17 +63,19 @@ export default function DeckBuilder({
 
   const handleCardDragStart = (e: DragEvent, deckCard: DeckCard, location: 'main' | 'sideboard') => {
     if (e.dataTransfer) {
-      e.dataTransfer.setData('application/json', JSON.stringify({
+      const dragData = {
         card: deckCard.card,
         fromLocation: location,
         cardId: deckCard.card.id
-      }))
+      }
+      e.dataTransfer.setData('application/json', JSON.stringify(dragData))
       e.dataTransfer.effectAllowed = 'move'
     }
   }
 
   const handleCardDrop = (e: DragEvent, targetLocation: 'main' | 'sideboard') => {
     e.preventDefault()
+    e.stopPropagation()
     setDragOverLocation(null)
     
     if (!e.dataTransfer) return
@@ -76,12 +92,9 @@ export default function DeckBuilder({
         }
         // デッキ内でのカード移動の場合（DragDataオブジェクト）
         else if ('fromLocation' in dragData && 'cardId' in dragData) {
-          const { card, fromLocation, cardId } = dragData
+          const { cardId, fromLocation } = dragData
           if (fromLocation !== targetLocation) {
-            // 元の場所から削除
-            handleRemoveCard(cardId, fromLocation)
-            // 新しい場所に追加
-            handleAddCard(card, targetLocation)
+            onCardMove?.(cardId, fromLocation, targetLocation, 1)
           }
         }
       }
@@ -140,6 +153,7 @@ export default function DeckBuilder({
                   handleAddCard(deckCard.card, location)
                 }}
                 class="px-2 py-1 bg-green-500 text-white text-sm rounded hover:bg-green-600"
+                title="1枚追加"
               >
                 +
               </button>
@@ -148,9 +162,22 @@ export default function DeckBuilder({
                   handleRemoveCard(deckCard.card.id, location)
                 }}
                 class="px-2 py-1 bg-red-500 text-white text-sm rounded hover:bg-red-600"
+                title="1枚削除"
               >
                 -
               </button>
+              {onCardMove && (
+                <button
+                  onClick={() => {
+                    const targetLocation = location === 'main' ? 'sideboard' : 'main'
+                    onCardMove(deckCard.card.id, location, targetLocation, 1)
+                  }}
+                  class="px-2 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600"
+                  title={location === 'main' ? 'サイドボードに移動' : 'メインデッキに移動'}
+                >
+                  {location === 'main' ? '→S' : '→M'}
+                </button>
+              )}
             </div>
           </div>
         ))}
