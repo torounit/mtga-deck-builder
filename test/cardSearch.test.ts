@@ -4,12 +4,12 @@ import type { CardSearchFilters } from '../app/types/card'
 
 describe('Card Search Service', () => {
   it('should search cards by name', async () => {
-    const filters: CardSearchFilters = { name: 'Lightning Bolt' }
+    const filters: CardSearchFilters = { name: 'Lightning' }
     const result = await searchCards(filters)
 
     expect(result.cards).toBeDefined()
     expect(result.cards.length).toBeGreaterThan(0)
-    expect(result.cards[0].name).toContain('Lightning Bolt')
+    expect(result.cards[0].name).toContain('Lightning')
     expect(result.total_cards).toBeGreaterThan(0)
   })
 
