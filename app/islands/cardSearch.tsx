@@ -8,6 +8,9 @@ interface CardSearchProps {
 
 export default function CardSearch({ onCardAdd }: CardSearchProps) {
   const [searchQuery, setSearchQuery] = useState('')
+  const [selectedColors, setSelectedColors] = useState<string[]>([])
+  const [selectedType, setSelectedType] = useState('')
+  const [selectedCmc, setSelectedCmc] = useState<number | undefined>(undefined)
   const [cards, setCards] = useState<Card[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -16,6 +19,14 @@ export default function CardSearch({ onCardAdd }: CardSearchProps) {
   const [hasMore, setHasMore] = useState(false)
   
   const pageSize = 16
+  
+  const colors = [
+    { code: 'W', name: '白', color: 'bg-yellow-100 text-yellow-800' },
+    { code: 'U', name: '青', color: 'bg-blue-100 text-blue-800' },
+    { code: 'B', name: '黒', color: 'bg-gray-100 text-gray-800' },
+    { code: 'R', name: '赤', color: 'bg-red-100 text-red-800' },
+    { code: 'G', name: '緑', color: 'bg-green-100 text-green-800' }
+  ]
 
   const handleDragStart = (e: DragEvent, card: Card) => {
     if (e.dataTransfer) {
@@ -24,15 +35,38 @@ export default function CardSearch({ onCardAdd }: CardSearchProps) {
     }
   }
 
+  const toggleColor = (colorCode: string) => {
+    setSelectedColors(prev => {
+      if (prev.includes(colorCode)) {
+        return prev.filter(c => c !== colorCode)
+      } else {
+        return [...prev, colorCode]
+      }
+    })
+  }
+
   const performSearch = async (page: number = 1) => {
-    if (!searchQuery.trim()) return
+    if (!searchQuery.trim() && selectedColors.length === 0 && !selectedType && selectedCmc === undefined) {
+      return
+    }
 
     setLoading(true)
     setError(null)
 
     try {
-      const filters: CardSearchFilters = {
-        name: searchQuery
+      const filters: CardSearchFilters = {}
+      
+      if (searchQuery.trim()) {
+        filters.name = searchQuery
+      }
+      if (selectedColors.length > 0) {
+        filters.colors = selectedColors
+      }
+      if (selectedType) {
+        filters.type = selectedType
+      }
+      if (selectedCmc !== undefined) {
+        filters.cmc = selectedCmc
       }
       
       const result = await searchCards(filters, { page, pageSize })
@@ -69,7 +103,8 @@ export default function CardSearch({ onCardAdd }: CardSearchProps) {
 
   return (
     <div class="w-full max-w-6xl mx-auto p-4">
-      <form onSubmit={handleSearch} class="mb-6">
+      <form onSubmit={handleSearch} class="mb-6 space-y-4">
+        {/* カード名検索 */}
         <div class="flex gap-2">
           <input
             type="text"
@@ -87,6 +122,71 @@ export default function CardSearch({ onCardAdd }: CardSearchProps) {
           >
             {loading ? '検索中...' : '検索'}
           </button>
+        </div>
+
+        {/* 高度な検索フィルター */}
+        <div class="bg-gray-50 p-4 rounded-lg space-y-4">
+          <h3 class="font-medium text-gray-700">詳細フィルター</h3>
+          
+          {/* 色選択 */}
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">色</label>
+            <div class="flex gap-2">
+              {colors.map((color) => (
+                <button
+                  key={color.code}
+                  type="button"
+                  onClick={() => { toggleColor(color.code); }}
+                  class={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
+                    selectedColors.includes(color.code)
+                      ? `${color.color} ring-2 ring-blue-500`
+                      : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+                  }`}
+                >
+                  {color.name}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* タイプ選択 */}
+          <div class="flex gap-4">
+            <div class="flex-1">
+              <label class="block text-sm font-medium text-gray-700 mb-2">タイプ</label>
+              <select
+                value={selectedType}
+                onChange={(e) => { setSelectedType((e.target as HTMLSelectElement).value); }}
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">すべてのタイプ</option>
+                <option value="Creature">クリーチャー</option>
+                <option value="Instant">インスタント</option>
+                <option value="Sorcery">ソーサリー</option>
+                <option value="Enchantment">エンチャント</option>
+                <option value="Artifact">アーティファクト</option>
+                <option value="Planeswalker">プレインズウォーカー</option>
+                <option value="Land">土地</option>
+              </select>
+            </div>
+
+            {/* マナコスト選択 */}
+            <div class="flex-1">
+              <label class="block text-sm font-medium text-gray-700 mb-2">マナコスト</label>
+              <select
+                value={selectedCmc ?? ''}
+                onChange={(e) => {
+                  const value = (e.target as HTMLSelectElement).value
+                  setSelectedCmc(value === '' ? undefined : parseInt(value))
+                }}
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">すべてのコスト</option>
+                {Array.from({ length: 16 }, (_, i) => (
+                  <option key={i} value={i}>{i}</option>
+                ))}
+              </select>
+            </div>
+          </div>
         </div>
       </form>
 
