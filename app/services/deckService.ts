@@ -38,12 +38,23 @@ function addCardToDeck(
   // Basic Landかどうかを判定
   const isBasicLand = card.type_line.includes('Basic Land')
 
+  if (!isBasicLand) {
+    // 非基本カードの場合、メインデッキとサイドボード合計での枚数をチェック
+    const mainCount =
+      deck.mainDeck.find((dc) => dc.card.id === card.id)?.quantity ?? 0
+    const sideCount =
+      deck.sideboard.find((dc) => dc.card.id === card.id)?.quantity ?? 0
+    const totalCount = mainCount + sideCount
+
+    if (totalCount >= MAX_CARD_COPIES) {
+      // 既に4枚に達している場合は追加しない
+      return { ...deck }
+    }
+  }
+
   if (existingCard) {
     // 既存のカードの枚数を増やす
-    // Basic Landは制限なし、その他のカードは4枚まで
-    if (isBasicLand || existingCard.quantity < MAX_CARD_COPIES) {
-      existingCard.quantity++
-    }
+    existingCard.quantity++
   } else {
     // 新しいカードを追加
     const newDeckCard: DeckCard = {
