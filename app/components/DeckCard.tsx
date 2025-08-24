@@ -9,6 +9,27 @@ interface DeckCardProps {
   onDragStart: (e: DragEvent, deckCard: DeckCard, location: 'main' | 'sideboard') => void
 }
 
+function getCardBorderColor(colors: string[]) {
+  if (colors.length === 0) {
+    return 'border-gray-300'
+  }
+  
+  if (colors.length === 1) {
+    const colorMap = {
+      W: 'border-yellow-400',
+      U: 'border-blue-400', 
+      B: 'border-gray-600',
+      R: 'border-red-400',
+      G: 'border-green-400',
+      C: 'border-gray-300'
+    }
+    return colorMap[colors[0] as keyof typeof colorMap] || 'border-gray-300'
+  }
+  
+  // 多色カードは金色の枠
+  return 'border-yellow-600'
+}
+
 export default function DeckCard({
   deckCard,
   location,
@@ -17,18 +38,20 @@ export default function DeckCard({
   onCardMove,
   onDragStart
 }: DeckCardProps) {
+  const borderColor = getCardBorderColor(deckCard.card.colors)
+
   return (
     <div 
-      class="flex items-center justify-between p-2 border rounded hover:bg-gray-50 cursor-move"
+      class={`flex items-center justify-between p-2 border-2 rounded hover:bg-gray-50 cursor-move ${borderColor}`}
       draggable="true"
       onDragStart={(e: DragEvent) => {
         onDragStart(e, deckCard, location)
       }}
     >
-      <div class="flex-1 pointer-events-none">
+      <div class="flex items-center gap-2 flex-1 pointer-events-none">
         <span class="font-medium">{deckCard.quantity}x </span>
-        <span>{deckCard.card.name}</span>
-        <span class="text-gray-500 text-sm ml-2">{deckCard.card.mana_cost}</span>
+        <span class="flex-1">{deckCard.card.name}</span>
+        <span class="text-gray-500 text-sm">{deckCard.card.mana_cost}</span>
       </div>
       <div class="flex gap-1 pointer-events-auto">
         <button
