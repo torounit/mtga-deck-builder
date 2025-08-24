@@ -17,24 +17,20 @@ export default function FormatFilter({
   return (
     <div>
       <label class="block text-sm font-medium text-gray-700 mb-2">フォーマット</label>
-      <div class="space-y-2">
+      <select
+        value={selectedFormat}
+        onChange={(e) => {
+          const newFormat = (e.target as HTMLSelectElement).value
+          onFormatChange(newFormat)
+        }}
+        class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+      >
         {formats.map((format) => (
-          <label key={format.value} class="flex items-center">
-            <input
-              type="radio"
-              name="format"
-              value={format.value}
-              checked={selectedFormat === format.value}
-              onChange={(e) => {
-                const newFormat = (e.target as HTMLInputElement).value
-                onFormatChange(newFormat)
-              }}
-              class="mr-2"
-            />
-            <span>{format.label}</span>
-          </label>
+          <option key={format.value} value={format.value}>
+            {format.label}
+          </option>
         ))}
-      </div>
+      </select>
     </div>
   )
 }
