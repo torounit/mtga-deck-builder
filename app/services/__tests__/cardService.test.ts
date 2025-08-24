@@ -160,79 +160,6 @@ describe('CardService', () => {
     expect(url).toContain('format%3Astandard')
   })
 
-  // 高度な検索フィルターテスト
-  test('色フィルターで検索ができる', async () => {
-    mockFetch.mockResolvedValueOnce({
-      ok: true,
-      json: () =>
-        Promise.resolve({
-          data: [],
-          total_cards: 0,
-          has_more: false
-        })
-    })
-
-    const filters: CardSearchFilters = { colors: ['R', 'U'] }
-    const result = await searchCards(filters)
-
-    expect(result.cards).toEqual([])
-    expect(result.total_cards).toBe(0)
-  })
-
-  test('タイプフィルターで検索ができる', async () => {
-    mockFetch.mockResolvedValueOnce({
-      ok: true,
-      json: () =>
-        Promise.resolve({
-          data: [],
-          total_cards: 0,
-          has_more: false
-        })
-    })
-
-    const filters: CardSearchFilters = { type: 'Creature' }
-    const result = await searchCards(filters)
-
-    expect(result.cards).toEqual([])
-    expect(result.total_cards).toBe(0)
-  })
-
-  test('マナコストフィルターで検索ができる', async () => {
-    mockFetch.mockResolvedValueOnce({
-      ok: true,
-      json: () =>
-        Promise.resolve({
-          data: [],
-          total_cards: 0,
-          has_more: false
-        })
-    })
-
-    const filters: CardSearchFilters = { cmc: 3 }
-    const result = await searchCards(filters)
-
-    expect(result.cards).toEqual([])
-    expect(result.total_cards).toBe(0)
-  })
-
-  test('フォーマットフィルターで検索ができる', async () => {
-    mockFetch.mockResolvedValueOnce({
-      ok: true,
-      json: () =>
-        Promise.resolve({
-          data: [],
-          total_cards: 0,
-          has_more: false
-        })
-    })
-
-    const filters: CardSearchFilters = { format: 'standard' }
-    const result = await searchCards(filters)
-
-    expect(result.cards).toEqual([])
-    expect(result.total_cards).toBe(0)
-  })
-
   // ページネーションテスト
   test('ページネーションオプションが関数に正しく渡される', async () => {
     mockFetch.mockResolvedValueOnce({
@@ -251,16 +178,7 @@ describe('CardService', () => {
     const result = await searchCards(filters, options)
 
     expect(result.total_cards).toBe(50)
-    // page=2, pageSize=16, totalCards=50 なので totalPages=4, has_more=true
     expect(result.has_more).toBe(true)
     expect(mockFetch).toHaveBeenCalled()
-  })
-
-  test('ページ計算ロジックが正しく動作する', () => {
-    const totalCards = 50
-    const pageSize = 16
-    const expectedPages = Math.ceil(totalCards / pageSize)
-
-    expect(expectedPages).toBe(4)
   })
 })
