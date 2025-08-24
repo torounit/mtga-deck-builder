@@ -5,15 +5,17 @@ import { DeckService } from '../deckService'
 const createMockCard = (
   name: string,
   typeLine: string,
-  cmc: number = 0
+  cmc: number = 0,
+  colors: string[] = [],
+  colorIdentity: string[] = []
 ): Card => ({
   id: `mock-${name.toLowerCase().replace(/\s+/g, '-')}`,
   name,
   mana_cost: cmc > 0 ? `{${String(cmc)}}` : '',
   type_line: typeLine,
   oracle_text: '',
-  colors: [],
-  color_identity: [],
+  colors,
+  color_identity: colorIdentity,
   cmc,
   set: 'TST',
   rarity: 'common',
@@ -253,6 +255,93 @@ describe('DeckService', () => {
       const exported = DeckService.exportDeckToMTGA(deck)
 
       expect(exported).toBe('')
+    })
+  })
+
+  describe('getDeckColors', () => {
+    test('デッキの色を正しく取得できる', () => {
+      let deck = DeckService.createEmptyDeck()
+      const redCard = createMockCard(
+        'Lightning Bolt',
+        'Instant',
+        1,
+        ['R'],
+        ['R']
+      )
+      const blueCard = createMockCard(
+        'Counterspell',
+        'Instant',
+        2,
+        ['U'],
+        ['U']
+      )
+      const colorlessCard = createMockCard('Sol Ring', 'Artifact', 1, [], [])
+
+      deck = DeckService.addCardToDeck(deck, redCard, 'main')
+      deck = DeckService.addCardToDeck(deck, blueCard, 'main')
+      deck = DeckService.addCardToDeck(deck, colorlessCard, 'main')
+
+      const colors = DeckService.getDeckColors(deck)
+
+      expect(colors).toContain('R')
+      expect(colors).toContain('U')
+      expect(colors).not.toContain('W')
+      expect(colors).not.toContain('G')
+      expect(colors).not.toContain('B')
+      expect(colors).toHaveLength(2)
+    })
+
+    test('サイドボードの色も含める', () => {
+      let deck = DeckService.createEmptyDeck()
+      const redCard = createMockCard(
+        'Lightning Bolt',
+        'Instant',
+        1,
+        ['R'],
+        ['R']
+      )
+      const greenCard = createMockCard(
+        'Giant Growth',
+        'Instant',
+        1,
+        ['G'],
+        ['G']
+      )
+
+      deck = DeckService.addCardToDeck(deck, redCard, 'main')
+      deck = DeckService.addCardToDeck(deck, greenCard, 'sideboard')
+
+      const colors = DeckService.getDeckColors(deck)
+
+      expect(colors).toContain('R')
+      expect(colors).toContain('G')
+      expect(colors).toHaveLength(2)
+    })
+
+    test('空のデッキは空の配列を返す', () => {
+      const deck = DeckService.createEmptyDeck()
+      const colors = DeckService.getDeckColors(deck)
+
+      expect(colors).toEqual([])
+    })
+
+    test('多色カードの色を正しく取得する', () => {
+      let deck = DeckService.createEmptyDeck()
+      const multiColorCard = createMockCard(
+        'Boros Charm',
+        'Instant',
+        2,
+        ['R', 'W'],
+        ['R', 'W']
+      )
+
+      deck = DeckService.addCardToDeck(deck, multiColorCard, 'main')
+
+      const colors = DeckService.getDeckColors(deck)
+
+      expect(colors).toContain('R')
+      expect(colors).toContain('W')
+      expect(colors).toHaveLength(2)
     })
   })
 })

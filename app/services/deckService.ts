@@ -23,7 +23,8 @@ export const DeckService = {
   removeCardFromDeck: removeCardFromDeck,
   moveCardBetweenDecks: moveCardBetweenDecks,
   getDeckStats: getDeckStats,
-  exportDeckToMTGA: exportDeckToMTGA
+  exportDeckToMTGA: exportDeckToMTGA,
+  getDeckColors: getDeckColors
 }
 
 function addCardToDeck(
@@ -172,4 +173,17 @@ function exportDeckToMTGA(deck: Deck): string {
   }
 
   return lines.join('\n')
+}
+
+function getDeckColors(deck: Deck): string[] {
+  const allCards = [...deck.mainDeck, ...deck.sideboard]
+  const colorSet = new Set<string>()
+
+  allCards.forEach((deckCard) => {
+    deckCard.card.colors.forEach((color) => {
+      colorSet.add(color)
+    })
+  })
+
+  return Array.from(colorSet).sort()
 }

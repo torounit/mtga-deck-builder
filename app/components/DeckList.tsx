@@ -1,3 +1,4 @@
+import { DeckService } from '../services/deckService'
 import type { Deck } from '../types/deck'
 
 interface DeckListProps {
@@ -23,6 +24,25 @@ export default function DeckList({
     const mainCount = deck.mainDeck.reduce((sum, dc) => sum + dc.quantity, 0)
     const sideCount = deck.sideboard.reduce((sum, dc) => sum + dc.quantity, 0)
     return { main: mainCount, side: sideCount }
+  }
+
+  const getColorCircle = (color: string) => {
+    const colorStyles = {
+      W: 'bg-yellow-100 border-yellow-400 text-yellow-800', // 白
+      U: 'bg-blue-100 border-blue-400 text-blue-800', // 青
+      B: 'bg-gray-800 border-gray-900 text-white', // 黒
+      R: 'bg-red-100 border-red-400 text-red-800', // 赤
+      G: 'bg-green-100 border-green-400 text-green-800' // 緑
+    }
+
+    return (
+      <span
+        class={`inline-flex items-center justify-center w-6 h-6 text-xs font-bold rounded-full border-2 ${colorStyles[color as keyof typeof colorStyles] || 'bg-gray-100 border-gray-400 text-gray-800'}`}
+        title={`色: ${color}`}
+      >
+        {color}
+      </span>
+    )
   }
 
   return (
@@ -51,15 +71,25 @@ export default function DeckList({
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {decks.map((deck) => {
             const { main, side } = getTotalCards(deck)
+            const colors = DeckService.getDeckColors(deck)
             return (
               <div
                 key={deck.id}
                 class="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow"
               >
                 <div class="flex justify-between items-start mb-4">
-                  <h3 class="text-xl font-semibold text-gray-900 truncate">
-                    {deck.name}
-                  </h3>
+                  <div class="flex-1 min-w-0">
+                    <h3 class="text-xl font-semibold text-gray-900 truncate">
+                      {deck.name}
+                    </h3>
+                    <div class="flex gap-1 mt-2">
+                      {colors.length > 0 ? (
+                        colors.map((color) => getColorCircle(color))
+                      ) : (
+                        <span class="text-xs text-gray-500">無色</span>
+                      )}
+                    </div>
+                  </div>
                   <div class="flex gap-2 ml-2">
                     <a
                       href={`/deck/${deck.id}`}
