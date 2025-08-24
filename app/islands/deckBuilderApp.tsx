@@ -1,28 +1,48 @@
 import { useState, useEffect } from 'hono/jsx'
+import { DeckManagerService } from '../services/deckManagerService'
 import { DeckService } from '../services/deckService'
 import type { Card } from '../types/card'
 import type { Deck } from '../types/deck'
 import CardSearch from './cardSearch'
 import DeckBuilder from './deckBuilder'
 
-export default function DeckBuilderApp() {
+interface DeckBuilderAppProps {
+  deckId?: string | null
+}
+
+export default function DeckBuilderApp({ deckId }: DeckBuilderAppProps) {
   const [deck, setDeck] = useState<Deck>(() => DeckService.createEmptyDeck())
   const [isClient, setIsClient] = useState(false)
 
   useEffect(() => {
     setIsClient(true)
-    // クライアントサイドでのみローカルストレージからロード
+    // 特定のデッキIDが指定されている場合はそれをロード
+    if (deckId) {
+      const targetDeck = DeckManagerService.getDeckById(deckId)
+      if (targetDeck) {
+        setDeck(targetDeck)
+        return
+      }
+    }
+    
+    // それ以外は従来通りローカルストレージからロード
     const savedDeck = DeckService.loadDeck()
     if (savedDeck) {
       setDeck(savedDeck)
     }
-  }, [])
+  }, [deckId])
 
   useEffect(() => {
-    if (isClient) {
-      DeckService.saveDeck(deck)
+    if (isClient && deck.id) {
+      // 特定のデッキIDが指定されている場合はDeckManagerServiceで保存
+      if (deckId && deck.id === deckId) {
+        DeckManagerService.updateDeck(deck)
+      } else {
+        // 従来のローカルストレージでの保存も維持
+        DeckService.saveDeck(deck)
+      }
     }
-  }, [deck, isClient])
+  }, [deck, isClient, deckId])
 
   const handleCardAdd = (card: Card, location: 'main' | 'sideboard' = 'main') => {
     const updatedDeck = DeckService.addCardToDeck(deck, card, location)

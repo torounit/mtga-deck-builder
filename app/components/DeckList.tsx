@@ -66,13 +66,13 @@ export default function DeckList({
                   </h3>
                   <div class="flex gap-2 ml-2">
                     <button
-                      onClick={() => onEditDeck(deck.id)}
+                      onClick={() => { onEditDeck(deck.id); }}
                       class="text-blue-600 hover:text-blue-800 text-sm font-medium"
                     >
                       編集
                     </button>
                     <button
-                      onClick={() => onDeleteDeck(deck.id)}
+                      onClick={() => { onDeleteDeck(deck.id); }}
                       class="text-red-600 hover:text-red-800 text-sm font-medium"
                     >
                       削除
