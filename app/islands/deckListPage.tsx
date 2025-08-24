@@ -22,6 +22,7 @@ export default function DeckListPage() {
     }
   }
 
+
   return (
     <DeckList
       decks={decks}
