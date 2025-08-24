@@ -16,14 +16,14 @@ export default function FormatFilter({
 
   return (
     <div>
-      <label class="block text-sm font-medium text-gray-700 mb-2">フォーマット</label>
+      <label class="block text-sm font-medium text-gray-700 mb-1">フォーマット</label>
       <select
         value={selectedFormat}
         onChange={(e) => {
           const newFormat = (e.target as HTMLSelectElement).value
           onFormatChange(newFormat)
         }}
-        class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        class="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
       >
         {formats.map((format) => (
           <option key={format.value} value={format.value}>

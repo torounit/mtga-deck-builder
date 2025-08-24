@@ -18,8 +18,8 @@ export default function ColorFilter({
 
   return (
     <div>
-      <label class="block text-sm font-medium text-gray-700 mb-2">色</label>
-      <div class="flex gap-2">
+      <label class="block text-sm font-medium text-gray-700 mb-1">色</label>
+      <div class="flex gap-1">
         {colors.map((color) => (
           <button
             key={color.code}
@@ -27,9 +27,9 @@ export default function ColorFilter({
             onClick={() => {
               onToggleColor(color.code)
             }}
-            class={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
+            class={`px-2 py-1 rounded text-xs font-medium transition-colors ${
               selectedColors.includes(color.code)
-                ? `${color.color} ring-2 ring-blue-500`
+                ? `${color.color} ring-1 ring-blue-500`
                 : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
             }`}
           >
