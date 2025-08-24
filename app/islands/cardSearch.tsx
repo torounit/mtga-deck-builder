@@ -127,7 +127,7 @@ export default function CardSearch({ onCardAdd }: CardSearchProps) {
   }
 
   return (
-    <div class="w-full max-w-6xl mx-auto p-4 space-y-6">
+    <div class="w-full p-4 space-y-6">
       <SearchForm
         searchQuery={searchQuery}
         onSearchQueryChange={setSearchQuery}

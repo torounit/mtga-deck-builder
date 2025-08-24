@@ -32,15 +32,7 @@ export default function DeckHeader({
           MTGAにエクスポート
         </button>
       </div>
-      
-      <div class="flex gap-4 text-sm">
-        <span class={stats.isValidMainDeck ? 'text-green-600' : 'text-red-600'}>
-          メインデッキ: {stats.mainDeckSize}/60
-        </span>
-        <span class={stats.isValidSideboard ? 'text-green-600' : 'text-red-600'}>
-          サイドボード: {stats.sideboardSize}/15
-        </span>
-      </div>
+
     </div>
   )
 }

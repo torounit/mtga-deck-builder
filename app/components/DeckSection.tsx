@@ -44,7 +44,7 @@ export default function DeckSection({
       }}
     >
       <h3 class="text-lg font-semibold mb-3">
-        {title} ({cards.reduce((sum, dc) => sum + dc.quantity, 0)}/{maxSize})
+        {title} (<span class={cards.reduce((sum, dc) => sum + dc.quantity, 0) > maxSize ? 'text-red-600' : cards.reduce((sum, dc) => sum + dc.quantity, 0) === maxSize ? 'text-green-600' : 'text-gray-700'}>{cards.reduce((sum, dc) => sum + dc.quantity, 0)}</span>/{maxSize})
       </h3>
       <div class="space-y-2">
         {cards.map((deckCard) => (

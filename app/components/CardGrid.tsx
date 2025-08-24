@@ -16,7 +16,7 @@ export default function CardGrid({
 }: CardGridProps) {
   return (
     <>
-      <div class="grid grid-cols-4 gap-4">
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
         {cards.map((card) => (
           <CardItem
             key={card.id}
