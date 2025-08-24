@@ -2,16 +2,12 @@ import type { Deck } from '../types/deck'
 
 interface DeckListProps {
   decks: Deck[]
-  onEditDeck: (deckId: string) => void
   onDeleteDeck: (deckId: string) => void
-  onCreateDeck: () => void
 }
 
 export default function DeckList({
   decks,
-  onEditDeck,
-  onDeleteDeck,
-  onCreateDeck
+  onDeleteDeck
 }: DeckListProps) {
   const formatDate = (date: Date) => {
     return new Intl.DateTimeFormat('ja-JP', {
@@ -33,23 +29,23 @@ export default function DeckList({
     <div class="space-y-6">
       <div class="flex justify-between items-center">
         <h1 class="text-3xl font-bold text-gray-900">デッキ一覧</h1>
-        <button
-          onClick={onCreateDeck}
+        <a
+          href="/deck/new"
           class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
         >
           新しいデッキを作成
-        </button>
+        </a>
       </div>
 
       {decks.length === 0 ? (
         <div class="text-center py-12">
           <p class="text-gray-500 text-lg mb-4">保存されたデッキがありません</p>
-          <button
-            onClick={onCreateDeck}
+          <a
+            href="/deck/new"
             class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
             最初のデッキを作成
-          </button>
+          </a>
         </div>
       ) : (
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -65,12 +61,12 @@ export default function DeckList({
                     {deck.name}
                   </h3>
                   <div class="flex gap-2 ml-2">
-                    <button
-                      onClick={() => { onEditDeck(deck.id); }}
+                    <a
+                      href={`/deck/${deck.id}`}
                       class="text-blue-600 hover:text-blue-800 text-sm font-medium"
                     >
                       編集
-                    </button>
+                    </a>
                     <button
                       onClick={() => { onDeleteDeck(deck.id); }}
                       class="text-red-600 hover:text-red-800 text-sm font-medium"

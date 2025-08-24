@@ -1,5 +1,5 @@
 import { createRoute } from 'honox/factory'
-import MainApp from '../islands/mainApp'
+import DeckListPage from '../islands/deckListPage'
 
 export default createRoute((c) => {
   return c.render(
@@ -11,7 +11,7 @@ export default createRoute((c) => {
         </div>
       </header>
       <main class="px-4 py-8">
-        <MainApp />
+        <DeckListPage />
       </main>
     </div>
   )
