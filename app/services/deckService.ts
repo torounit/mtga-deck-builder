@@ -6,21 +6,6 @@ import {
   MAX_SIDEBOARD_SIZE
 } from '../types/deck'
 
-interface StoredDeck {
-  id: string
-  name: string
-  mainDeck: DeckCard[]
-  sideboard: DeckCard[]
-  createdAt: string
-  updatedAt: string
-}
-
-const STORAGE_KEY = 'mtga-deck-builder-deck'
-
-function isClientSide(): boolean {
-  return typeof window !== 'undefined'
-}
-
 function createEmptyDeck(): Deck {
   return {
     id: crypto.randomUUID(),
@@ -32,40 +17,8 @@ function createEmptyDeck(): Deck {
   }
 }
 
-function saveDeck(deck: Deck): void {
-  if (!isClientSide()) return
-
-  const deckToStore: StoredDeck = {
-    ...deck,
-    updatedAt: new Date().toISOString(),
-    createdAt: deck.createdAt.toISOString()
-  }
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(deckToStore))
-}
-
-function loadDeck(): Deck | null {
-  if (!isClientSide()) return null
-
-  const saved = localStorage.getItem(STORAGE_KEY)
-  if (!saved) return null
-
-  try {
-    const data = JSON.parse(saved) as StoredDeck
-    return {
-      ...data,
-      createdAt: new Date(data.createdAt),
-      updatedAt: new Date(data.updatedAt)
-    }
-  } catch {
-    return null
-  }
-}
-
 export const DeckService = {
   createEmptyDeck,
-  saveDeck,
-  loadDeck,
-
   addCardToDeck: addCardToDeck,
   removeCardFromDeck: removeCardFromDeck,
   moveCardBetweenDecks: moveCardBetweenDecks,

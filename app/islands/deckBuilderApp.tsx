@@ -26,15 +26,9 @@ export default function DeckBuilderApp({ deckId }: DeckBuilderAppProps) {
       const targetDeck = DeckManagerService.getDeckById(deckId)
       if (targetDeck) {
         setDeck(targetDeck)
-        return
       }
     }
-    
-    // それ以外は従来通りローカルストレージからロード
-    const savedDeck = DeckService.loadDeck()
-    if (savedDeck) {
-      setDeck(savedDeck)
-    }
+    // 新規デッキの場合はcreateEmptyDeckで作成済みなので何もしない
   }, [deckId, isClient])
 
   useEffect(() => {
@@ -53,9 +47,6 @@ export default function DeckBuilderApp({ deckId }: DeckBuilderAppProps) {
       } else if (deck.id === deckId) {
         // 既存デッキ編集の場合：DeckManagerServiceで保存
         DeckManagerService.updateDeck(deck)
-      } else {
-        // 従来のローカルストレージでの保存も維持
-        DeckService.saveDeck(deck)
       }
     }
   }, [deck, isClient, deckId])
