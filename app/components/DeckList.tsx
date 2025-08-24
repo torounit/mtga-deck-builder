@@ -1,6 +1,6 @@
 import { DeckService } from '../services/deckService'
 import type { Deck } from '../types/deck'
-import { getColorCircle } from '../utils/colorUtils'
+import ColorCircle from './ColorCircle'
 import { formatDate } from '../utils/dateUtils'
 import { getTotalCards } from '../utils/deckUtils'
 
@@ -53,7 +53,7 @@ export default function DeckList({
                     </h3>
                     <div class="flex gap-1 mt-2">
                       {colors.length > 0 ? (
-                        colors.map((color) => getColorCircle(color))
+                        colors.map((color) => <ColorCircle key={color} color={color} />)
                       ) : (
                         <span class="text-xs text-gray-500">無色</span>
                       )}

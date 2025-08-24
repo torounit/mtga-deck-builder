@@ -34,8 +34,12 @@ export default function DeckBuilderApp({ deckId }: DeckBuilderAppProps) {
   useEffect(() => {
     if (isClient && deck.id) {
       if (!deckId) {
-        // 新規デッキの場合：カードが追加されたら初回保存
-        if (deck.mainDeck.length > 0 || deck.sideboard.length > 0) {
+        // 新規デッキの場合：デッキ名が変更されたりカードが追加されたら保存
+        const shouldSave = deck.name !== 'New Deck' || 
+                          deck.mainDeck.length > 0 || 
+                          deck.sideboard.length > 0
+        
+        if (shouldSave) {
           const existingDeck = DeckManagerService.getDeckById(deck.id)
           if (!existingDeck) {
             // 新規デッキを作成し、現在のデッキデータで更新
