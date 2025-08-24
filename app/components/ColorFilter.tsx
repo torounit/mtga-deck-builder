@@ -12,7 +12,8 @@ export default function ColorFilter({
     { code: 'U', name: '青', color: 'bg-blue-100 text-blue-800' },
     { code: 'B', name: '黒', color: 'bg-gray-100 text-gray-800' },
     { code: 'R', name: '赤', color: 'bg-red-100 text-red-800' },
-    { code: 'G', name: '緑', color: 'bg-green-100 text-green-800' }
+    { code: 'G', name: '緑', color: 'bg-green-100 text-green-800' },
+    { code: 'C', name: '無色', color: 'bg-gray-200 text-gray-800' }
   ]
 
   return (

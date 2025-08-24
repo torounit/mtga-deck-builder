@@ -181,4 +181,22 @@ describe('CardService', () => {
     expect(result.has_more).toBe(true)
     expect(mockFetch).toHaveBeenCalled()
   })
+
+  test('無色カードで検索ができる', async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: () =>
+        Promise.resolve({
+          data: [],
+          total_cards: 0,
+          has_more: false
+        })
+    })
+
+    const filters: CardSearchFilters = { colors: ['C'] }
+    await searchCards(filters)
+
+    const url = mockFetch.mock.calls[0][0] as string
+    expect(url).toContain('color%3AC')
+  })
 })
