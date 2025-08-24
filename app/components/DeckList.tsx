@@ -1,5 +1,8 @@
 import { DeckService } from '../services/deckService'
 import type { Deck } from '../types/deck'
+import { getColorCircle } from '../utils/colorUtils'
+import { formatDate } from '../utils/dateUtils'
+import { getTotalCards } from '../utils/deckUtils'
 
 interface DeckListProps {
   decks: Deck[]
@@ -10,40 +13,6 @@ export default function DeckList({
   decks,
   onDeleteDeck
 }: DeckListProps) {
-  const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat('ja-JP', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    }).format(date)
-  }
-
-  const getTotalCards = (deck: Deck) => {
-    const mainCount = deck.mainDeck.reduce((sum, dc) => sum + dc.quantity, 0)
-    const sideCount = deck.sideboard.reduce((sum, dc) => sum + dc.quantity, 0)
-    return { main: mainCount, side: sideCount }
-  }
-
-  const getColorCircle = (color: string) => {
-    const colorStyles = {
-      W: 'bg-yellow-100 border-yellow-400 text-yellow-800', // 白
-      U: 'bg-blue-100 border-blue-400 text-blue-800', // 青
-      B: 'bg-gray-800 border-gray-900 text-white', // 黒
-      R: 'bg-red-100 border-red-400 text-red-800', // 赤
-      G: 'bg-green-100 border-green-400 text-green-800' // 緑
-    }
-
-    return (
-      <span
-        class={`inline-flex items-center justify-center w-6 h-6 text-xs font-bold rounded-full border-2 ${colorStyles[color as keyof typeof colorStyles] || 'bg-gray-100 border-gray-400 text-gray-800'}`}
-        title={`色: ${color}`}
-      >
-        {color}
-      </span>
-    )
-  }
 
   return (
     <div class="space-y-6">
