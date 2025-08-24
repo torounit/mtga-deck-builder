@@ -16,6 +16,11 @@ export default function DeckBuilderApp({ deckId }: DeckBuilderAppProps) {
 
   useEffect(() => {
     setIsClient(true)
+  }, [])
+
+  useEffect(() => {
+    if (!isClient) return
+    
     // 特定のデッキIDが指定されている場合はそれをロード
     if (deckId) {
       const targetDeck = DeckManagerService.getDeckById(deckId)
@@ -30,7 +35,7 @@ export default function DeckBuilderApp({ deckId }: DeckBuilderAppProps) {
     if (savedDeck) {
       setDeck(savedDeck)
     }
-  }, [deckId])
+  }, [deckId, isClient])
 
   useEffect(() => {
     if (isClient && deck.id) {
