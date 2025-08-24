@@ -38,8 +38,11 @@ export default function DeckBuilderApp({ deckId }: DeckBuilderAppProps) {
         if (deck.mainDeck.length > 0 || deck.sideboard.length > 0) {
           const existingDeck = DeckManagerService.getDeckById(deck.id)
           if (!existingDeck) {
+            // 新規デッキを作成し、現在のデッキデータで更新
             const savedDeck = DeckManagerService.createDeck(deck.name)
-            setDeck(prev => ({ ...prev, id: savedDeck.id }))
+            const deckWithNewId = { ...deck, id: savedDeck.id }
+            DeckManagerService.updateDeck(deckWithNewId)
+            setDeck(deckWithNewId)
           } else {
             DeckManagerService.updateDeck(deck)
           }
