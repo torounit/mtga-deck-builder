@@ -102,6 +102,52 @@ describe('DeckService', () => {
       expect(plainsCard?.quantity).toBe(5)
     })
 
+    test('メインデッキとサイドボード合計で非基本カードは4枚まで', () => {
+      let deck = DeckService.createEmptyDeck()
+      const nonBasicCard = createMockCard('Lightning Bolt', 'Instant')
+
+      // メインデッキに3枚追加
+      deck = DeckService.addCardToDeck(deck, nonBasicCard, 'main')
+      deck = DeckService.addCardToDeck(deck, nonBasicCard, 'main')
+      deck = DeckService.addCardToDeck(deck, nonBasicCard, 'main')
+
+      // サイドボードに2枚追加しようとする（合計5枚になる）
+      deck = DeckService.addCardToDeck(deck, nonBasicCard, 'sideboard')
+      deck = DeckService.addCardToDeck(deck, nonBasicCard, 'sideboard')
+
+      const mainCard = deck.mainDeck.find(
+        (dc) => dc.card.name === 'Lightning Bolt'
+      )
+      const sideCard = deck.sideboard.find(
+        (dc) => dc.card.name === 'Lightning Bolt'
+      )
+
+      // 合計4枚まで（メイン3枚、サイド1枚）
+      expect(mainCard?.quantity).toBe(3)
+      expect(sideCard?.quantity).toBe(1)
+    })
+
+    test('基本土地はメインデッキとサイドボード合計で4枚を超えても追加できる', () => {
+      let deck = DeckService.createEmptyDeck()
+      const basicLand = createMockCard('Mountain', 'Basic Land — Mountain')
+
+      // メインデッキに3枚追加
+      deck = DeckService.addCardToDeck(deck, basicLand, 'main')
+      deck = DeckService.addCardToDeck(deck, basicLand, 'main')
+      deck = DeckService.addCardToDeck(deck, basicLand, 'main')
+
+      // サイドボードに3枚追加（合計6枚）
+      deck = DeckService.addCardToDeck(deck, basicLand, 'sideboard')
+      deck = DeckService.addCardToDeck(deck, basicLand, 'sideboard')
+      deck = DeckService.addCardToDeck(deck, basicLand, 'sideboard')
+
+      const mainCard = deck.mainDeck.find((dc) => dc.card.name === 'Mountain')
+      const sideCard = deck.sideboard.find((dc) => dc.card.name === 'Mountain')
+
+      expect(mainCard?.quantity).toBe(3)
+      expect(sideCard?.quantity).toBe(3)
+    })
+
     test('異なる基本土地タイプを認識する', () => {
       const basicLands = ['Plains', 'Island', 'Swamp', 'Mountain', 'Forest']
 
