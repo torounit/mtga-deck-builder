@@ -39,8 +39,19 @@ export default function DeckBuilderApp({ deckId }: DeckBuilderAppProps) {
 
   useEffect(() => {
     if (isClient && deck.id) {
-      // 特定のデッキIDが指定されている場合はDeckManagerServiceで保存
-      if (deckId && deck.id === deckId) {
+      if (!deckId) {
+        // 新規デッキの場合：カードが追加されたら初回保存
+        if (deck.mainDeck.length > 0 || deck.sideboard.length > 0) {
+          const existingDeck = DeckManagerService.getDeckById(deck.id)
+          if (!existingDeck) {
+            const savedDeck = DeckManagerService.createDeck(deck.name)
+            setDeck(prev => ({ ...prev, id: savedDeck.id }))
+          } else {
+            DeckManagerService.updateDeck(deck)
+          }
+        }
+      } else if (deck.id === deckId) {
+        // 既存デッキ編集の場合：DeckManagerServiceで保存
         DeckManagerService.updateDeck(deck)
       } else {
         // 従来のローカルストレージでの保存も維持
