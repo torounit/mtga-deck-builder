@@ -67,8 +67,8 @@ export default function CardSearch({ onCardAdd }: CardSearchProps) {
   }, [searchQuery])
 
   const performSearch = async (page: number = 1) => {
-    // フォーマットが選択されている場合は検索を実行
-    if (!searchQuery.trim() && selectedColors.length === 0 && !selectedType && selectedCmc === undefined && !selectedFormat) {
+    // 検索条件が何も設定されていない場合は検索をスキップ
+    if (!searchQuery.trim() && selectedColors.length === 0 && !selectedType && selectedCmc === undefined && selectedFormat === '') {
       return
     }
 
