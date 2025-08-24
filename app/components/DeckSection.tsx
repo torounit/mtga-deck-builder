@@ -1,4 +1,5 @@
 import type { DeckCard as DeckCardType } from '../types/deck'
+import { getCardListTotal } from '../utils/deckUtils'
 import DeckCard from './DeckCard'
 
 interface DeckSectionProps {
@@ -44,9 +45,9 @@ export default function DeckSection({
       <h3 class="text-lg font-semibold mb-3">
         {title} (<span class={
           location === 'main' 
-            ? (cards.reduce((sum, dc) => sum + dc.quantity, 0) < 60 ? 'text-red-600' : 'text-gray-700')
-            : (cards.reduce((sum, dc) => sum + dc.quantity, 0) > 15 ? 'text-red-600' : 'text-gray-700')
-        }>{cards.reduce((sum, dc) => sum + dc.quantity, 0)}</span>/{location === 'main' ? '60+' : '15'})
+            ? (getCardListTotal(cards) < 60 ? 'text-red-600' : 'text-gray-700')
+            : (getCardListTotal(cards) > 15 ? 'text-red-600' : 'text-gray-700')
+        }>{getCardListTotal(cards)}</span>/{location === 'main' ? '60+' : '15'})
       </h3>
       <div class="space-y-2">
         {cards.map((deckCard) => (
