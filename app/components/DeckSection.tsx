@@ -5,7 +5,6 @@ interface DeckSectionProps {
   title: string
   cards: DeckCardType[]
   location: 'main' | 'sideboard'
-  maxSize: number
   dragOverLocation: 'main' | 'sideboard' | null
   onCardAdd: (cardId: string, location: 'main' | 'sideboard') => void
   onCardRemove: (cardId: string, location: 'main' | 'sideboard') => void
@@ -20,7 +19,6 @@ export default function DeckSection({
   title,
   cards,
   location,
-  maxSize,
   dragOverLocation,
   onCardAdd,
   onCardRemove,
@@ -44,7 +42,11 @@ export default function DeckSection({
       }}
     >
       <h3 class="text-lg font-semibold mb-3">
-        {title} (<span class={cards.reduce((sum, dc) => sum + dc.quantity, 0) > maxSize ? 'text-red-600' : cards.reduce((sum, dc) => sum + dc.quantity, 0) === maxSize ? 'text-green-600' : 'text-gray-700'}>{cards.reduce((sum, dc) => sum + dc.quantity, 0)}</span>/{maxSize})
+        {title} (<span class={
+          location === 'main' 
+            ? (cards.reduce((sum, dc) => sum + dc.quantity, 0) < 60 ? 'text-red-600' : 'text-gray-700')
+            : (cards.reduce((sum, dc) => sum + dc.quantity, 0) > 15 ? 'text-red-600' : 'text-gray-700')
+        }>{cards.reduce((sum, dc) => sum + dc.quantity, 0)}</span>/{location === 'main' ? '60+' : '15'})
       </h3>
       <div class="space-y-2">
         {cards.map((deckCard) => (

@@ -115,13 +115,10 @@ export default function DeckBuilder({
     alert('デッキリストをクリップボードにコピーしました')
   }
 
-  const stats = DeckService.getDeckStats(deck)
-
   return (
     <div class="w-full">
       <DeckHeader
         deck={deck}
-        stats={stats}
         onDeckNameChange={handleDeckNameChange}
         onExport={handleExport}
       />
@@ -131,7 +128,6 @@ export default function DeckBuilder({
           title="メインデッキ"
           cards={deck.mainDeck}
           location="main"
-          maxSize={60}
           dragOverLocation={dragOverLocation}
           onCardAdd={handleAddCard}
           onCardRemove={handleRemoveCard}
@@ -145,7 +141,6 @@ export default function DeckBuilder({
           title="サイドボード"
           cards={deck.sideboard}
           location="sideboard"
-          maxSize={15}
           dragOverLocation={dragOverLocation}
           onCardAdd={handleAddCard}
           onCardRemove={handleRemoveCard}

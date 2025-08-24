@@ -1,16 +1,13 @@
-import type { DeckStats } from '../services/deckService'
 import type { Deck } from '../types/deck'
 
 interface DeckHeaderProps {
   deck: Deck
-  stats: DeckStats
   onDeckNameChange: (name: string) => void
   onExport: () => void
 }
 
 export default function DeckHeader({
   deck,
-  stats,
   onDeckNameChange,
   onExport
 }: DeckHeaderProps) {
