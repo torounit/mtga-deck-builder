@@ -78,6 +78,7 @@ function removeCardFromDeck(
 export interface DeckStats {
   mainDeckSize: number
   sideboardSize: number
+  totalSize: number
   isValidMainDeck: boolean
   isValidSideboard: boolean
 }
@@ -89,6 +90,7 @@ function getDeckStats(deck: Deck): DeckStats {
   return {
     mainDeckSize,
     sideboardSize,
+    totalSize: mainDeckSize + sideboardSize,
     isValidMainDeck: mainDeckSize >= MAX_MAIN_DECK_SIZE,
     isValidSideboard: sideboardSize <= MAX_SIDEBOARD_SIZE
   }
@@ -147,12 +149,19 @@ function moveCardBetweenDecks(
 }
 
 function exportDeckToMTGA(deck: Deck): string {
+  // 空のデッキの場合は空文字列を返す
+  if (deck.mainDeck.length === 0 && deck.sideboard.length === 0) {
+    return ''
+  }
+
   const lines: string[] = []
 
-  lines.push('Deck')
-  deck.mainDeck.forEach((dc) => {
-    lines.push(`${String(dc.quantity)} ${dc.card.name}`)
-  })
+  if (deck.mainDeck.length > 0) {
+    lines.push('Deck')
+    deck.mainDeck.forEach((dc) => {
+      lines.push(`${String(dc.quantity)} ${dc.card.name}`)
+    })
+  }
 
   if (deck.sideboard.length > 0) {
     lines.push('')
