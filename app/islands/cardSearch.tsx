@@ -127,47 +127,53 @@ export default function CardSearch({ onCardAdd }: CardSearchProps) {
   }
 
   return (
-    <div class="w-full p-4 space-y-6">
-      <SearchForm
-        searchQuery={searchQuery}
-        onSearchQueryChange={setSearchQuery}
-        onSubmit={handleSearch}
-        loading={loading}
-      />
+    <div class="w-full h-full flex flex-col">
+      <div class="flex-shrink-0 space-y-4">
+        <SearchForm
+          searchQuery={searchQuery}
+          onSearchQueryChange={setSearchQuery}
+          onSubmit={handleSearch}
+          loading={loading}
+        />
 
-      <SearchFilters
-        selectedColors={selectedColors}
-        selectedType={selectedType}
-        selectedCmc={selectedCmc}
-        selectedFormat={selectedFormat}
-        onToggleColor={handleToggleColor}
-        onTypeChange={setSelectedType}
-        onCmcChange={setSelectedCmc}
-        onFormatChange={setSelectedFormat}
-      />
+        <SearchFilters
+          selectedColors={selectedColors}
+          selectedType={selectedType}
+          selectedCmc={selectedCmc}
+          selectedFormat={selectedFormat}
+          onToggleColor={handleToggleColor}
+          onTypeChange={setSelectedType}
+          onCmcChange={setSelectedCmc}
+          onFormatChange={setSelectedFormat}
+        />
 
-      {error && (
-        <div class="p-4 bg-red-100 border border-red-400 text-red-700 rounded">
-          {error}
-        </div>
-      )}
+        {error && (
+          <div class="p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+            {error}
+          </div>
+        )}
+      </div>
 
-      <CardGrid
-        cards={cards}
-        onCardAdd={onCardAdd}
-        loading={loading}
-        searchQuery={searchQuery}
-      />
+      <div class="flex-1 min-h-0 mt-4">
+        <CardGrid
+          cards={cards}
+          onCardAdd={onCardAdd}
+          loading={loading}
+          searchQuery={searchQuery}
+        />
+      </div>
 
-      <Pagination
-        currentPage={currentPage}
-        totalCards={totalCards}
-        pageSize={pageSize}
-        hasMore={hasMore}
-        loading={loading}
-        onPreviousPage={handlePreviousPage}
-        onNextPage={handleNextPage}
-      />
+      <div class="flex-shrink-0 mt-4">
+        <Pagination
+          currentPage={currentPage}
+          totalCards={totalCards}
+          pageSize={pageSize}
+          hasMore={hasMore}
+          loading={loading}
+          onPreviousPage={handlePreviousPage}
+          onNextPage={handleNextPage}
+        />
+      </div>
     </div>
   )
 }

@@ -115,11 +115,11 @@ export default function DeckBuilderApp({ deckId }: DeckBuilderAppProps) {
   }
 
   return (
-    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
-      <div class="xl:col-span-2">
+    <div class="h-screen grid grid-cols-1 xl:grid-cols-3 gap-6 p-4">
+      <div class="xl:col-span-2 min-h-0">
         <CardSearch onCardAdd={handleCardAdd} />
       </div>
-      <div class="xl:col-span-1">
+      <div class="xl:col-span-1 min-h-0">
         <DeckBuilder 
           deck={deck}
           onCardAdd={handleCardAdd}

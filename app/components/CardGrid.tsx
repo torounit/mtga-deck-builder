@@ -15,22 +15,24 @@ export default function CardGrid({
   searchQuery
 }: CardGridProps) {
   return (
-    <>
-      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-        {cards.map((card) => (
-          <CardItem
-            key={card.id}
-            card={card}
-            onCardAdd={onCardAdd}
-          />
-        ))}
-      </div>
-
-      {cards.length === 0 && !loading && searchQuery && (
-        <div class="text-center text-gray-500 mt-8">
-          検索結果が見つかりませんでした
+    <div class="h-full flex flex-col">
+      <div class="flex-1 overflow-y-auto">
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 p-1">
+          {cards.map((card) => (
+            <CardItem
+              key={card.id}
+              card={card}
+              onCardAdd={onCardAdd}
+            />
+          ))}
         </div>
-      )}
-    </>
+
+        {cards.length === 0 && !loading && searchQuery && (
+          <div class="text-center text-gray-500 mt-8">
+            検索結果が見つかりませんでした
+          </div>
+        )}
+      </div>
+    </div>
   )
 }
