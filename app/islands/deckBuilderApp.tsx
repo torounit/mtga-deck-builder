@@ -66,16 +66,13 @@ export default function DeckBuilderApp({ deckId }: DeckBuilderAppProps) {
         }
         
         setHasSaved(true)
-        console.log('新規デッキを保存しました:', completeNewDeck.name)
       } else {
         // 既存デッキを更新
         DeckManagerService.updateDeck(deckToSave)
-        console.log('デッキを更新しました:', deckToSave.name)
       }
     } else {
       // 既存デッキの編集
       DeckManagerService.updateDeck(deckToSave)
-      console.log('既存デッキを更新しました:', deckToSave.name)
     }
   }
   
