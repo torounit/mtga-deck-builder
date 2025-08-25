@@ -22,18 +22,12 @@ export default function DeckListPage() {
     }
   }
 
-  const handleRefresh = () => {
-    if (!isClient) return
-    const savedDecks = DeckManagerService.getAllDecks()
-    setDecks(savedDecks)
-  }
 
 
   return (
     <DeckList
       decks={decks}
       onDeleteDeck={handleDeleteDeck}
-      onRefresh={handleRefresh}
     />
   )
 }

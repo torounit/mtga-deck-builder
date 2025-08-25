@@ -7,35 +7,23 @@ import { getTotalCards } from '../utils/deckUtils'
 interface DeckListProps {
   decks: Deck[]
   onDeleteDeck: (deckId: string) => void
-  onRefresh?: () => void
 }
 
 export default function DeckList({
   decks,
-  onDeleteDeck,
-  onRefresh
+  onDeleteDeck
 }: DeckListProps) {
 
   return (
     <div class="space-y-6">
       <div class="flex justify-between items-center">
         <h1 class="text-3xl font-bold text-gray-900">デッキ一覧</h1>
-        <div class="flex gap-2">
-          {onRefresh && (
-            <button
-              onClick={onRefresh}
-              class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-            >
-              リフレッシュ
-            </button>
-          )}
-          <a
-            href="/deck/new"
-            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            新しいデッキを作成
-          </a>
-        </div>
+        <a
+          href="/deck/new"
+          class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          新しいデッキを作成
+        </a>
       </div>
 
       {decks.length === 0 ? (
