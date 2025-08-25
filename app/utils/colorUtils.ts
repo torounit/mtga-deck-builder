@@ -6,7 +6,7 @@
  * MTGカードの色に対応するTailwind CSSクラス
  */
 const COLOR_STYLES = {
-  W: 'bg-gray-100 border-gray-400 text-gray-800', // 白（薄いグレー）
+  W: 'bg-gray-50 border-gray-300 text-gray-700', // 白（より薄いグレー）
   U: 'bg-blue-100 border-blue-400 text-blue-800', // 青
   B: 'bg-gray-800 border-gray-900 text-white', // 黒
   R: 'bg-red-100 border-red-400 text-red-800', // 赤
@@ -17,7 +17,7 @@ const COLOR_STYLES = {
  * 色フィルター用の色スタイル（border なし）
  */
 const FILTER_COLOR_STYLES = {
-  W: 'bg-gray-100 text-gray-800', // 白（薄いグレー）
+  W: 'bg-gray-50 text-gray-700', // 白（より薄いグレー）
   U: 'bg-blue-100 text-blue-800', // 青
   B: 'bg-gray-100 text-gray-800', // 黒
   R: 'bg-red-100 text-red-800', // 赤
@@ -29,7 +29,7 @@ const FILTER_COLOR_STYLES = {
  * カード枠線の色スタイル
  */
 const CARD_BORDER_STYLES = {
-  W: 'border-gray-400', // 白（薄いグレー）
+  W: 'border-gray-300', // 白（より薄いグレー）
   U: 'border-blue-400', // 青
   B: 'border-gray-600', // 黒
   R: 'border-red-400', // 赤
