@@ -31,35 +31,67 @@ export default function DeckBuilderApp({ deckId }: DeckBuilderAppProps) {
     // 新規デッキの場合はcreateEmptyDeckで作成済みなので何もしない
   }, [deckId, isClient])
 
-  useEffect(() => {
-    if (isClient && deck.id) {
-      if (!deckId) {
-        // 新規デッキの場合：デッキ名が変更されたりカードが追加されたら保存
-        const shouldSave = deck.name !== 'New Deck' || 
-                          deck.mainDeck.length > 0 || 
-                          deck.sideboard.length > 0
-        
-        if (shouldSave) {
-          const existingDeck = DeckManagerService.getDeckById(deck.id)
-          if (!existingDeck) {
-            // 新規デッキを作成（createDeck内で既に保存される）
-            const savedDeck = DeckManagerService.createDeck(deck.name)
-            const deckWithNewId = { ...deck, id: savedDeck.id }
-            // カードが含まれている場合のみ追加で更新
-            if (deck.mainDeck.length > 0 || deck.sideboard.length > 0) {
-              DeckManagerService.updateDeck(deckWithNewId)
-            }
-            setDeck(deckWithNewId)
-          } else {
-            DeckManagerService.updateDeck(deck)
-          }
+  // 保存が必要なデッキの変更を検出するための状態
+  const [hasSaved, setHasSaved] = useState(false)
+  
+  // デッキ保存のロジック
+  const saveDeck = (deckToSave: Deck) => {
+    if (!isClient) return
+    
+    const shouldSave = deckToSave.name !== 'New Deck' || 
+                      deckToSave.mainDeck.length > 0 || 
+                      deckToSave.sideboard.length > 0
+    
+    if (!shouldSave) return
+    
+    if (!deckId) {
+      // 新規デッキの場合
+      const existingDeck = DeckManagerService.getDeckById(deckToSave.id)
+      if (!existingDeck) {
+        // 完全に新しいデッキを作成
+        const savedDeck = DeckManagerService.createDeck(deckToSave.name)
+        const completeNewDeck = {
+          ...deckToSave,
+          id: savedDeck.id,
+          createdAt: savedDeck.createdAt,
+          updatedAt: new Date()
         }
-      } else if (deck.id === deckId) {
-        // 既存デッキ編集の場合：DeckManagerServiceで保存
-        DeckManagerService.updateDeck(deck)
+        
+        // カードデータも含めて更新
+        DeckManagerService.updateDeck(completeNewDeck)
+        
+        // 状態を同期
+        if (deckToSave.id !== savedDeck.id) {
+          setDeck(completeNewDeck)
+        }
+        
+        setHasSaved(true)
+        console.log('新規デッキを保存しました:', completeNewDeck.name)
+      } else {
+        // 既存デッキを更新
+        DeckManagerService.updateDeck(deckToSave)
+        console.log('デッキを更新しました:', deckToSave.name)
       }
+    } else {
+      // 既存デッキの編集
+      DeckManagerService.updateDeck(deckToSave)
+      console.log('既存デッキを更新しました:', deckToSave.name)
     }
-  }, [deck, isClient, deckId])
+  }
+  
+  // デッキ名の変更を監視
+  useEffect(() => {
+    if (deck.name !== 'New Deck' && !hasSaved && isClient) {
+      saveDeck(deck)
+    }
+  }, [deck.name, hasSaved, isClient])
+  
+  // カードの変更を監視
+  useEffect(() => {
+    if ((deck.mainDeck.length > 0 || deck.sideboard.length > 0) && isClient) {
+      saveDeck(deck)
+    }
+  }, [deck.mainDeck.length, deck.sideboard.length, isClient])
 
   const handleCardAdd = (card: Card, location: 'main' | 'sideboard' = 'main') => {
     const updatedDeck = DeckService.addCardToDeck(deck, card, location)
