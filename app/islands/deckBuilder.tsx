@@ -116,14 +116,16 @@ export default function DeckBuilder({
   }
 
   return (
-    <div class="w-full">
-      <DeckHeader
-        deck={deck}
-        onDeckNameChange={handleDeckNameChange}
-        onExport={handleExport}
-      />
+    <div class="w-full h-full flex flex-col">
+      <div class="flex-shrink-0">
+        <DeckHeader
+          deck={deck}
+          onDeckNameChange={handleDeckNameChange}
+          onExport={handleExport}
+        />
+      </div>
 
-      <div class="space-y-6">
+      <div class="flex-1 overflow-y-auto space-y-6 pr-2">
         <DeckSection
           title="メインデッキ"
           cards={deck.mainDeck}
