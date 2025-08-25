@@ -19,7 +19,7 @@ export default function DeckCard({
   onCardMove,
   onDragStart
 }: DeckCardProps) {
-  const borderColor = getCardBorderColor(deckCard.card.colors)
+  const borderColor = getCardBorderColor(deckCard.card.color_identity)
 
   return (
     <div 

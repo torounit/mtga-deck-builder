@@ -14,7 +14,7 @@ export default function CardItem({ card, onCardAdd }: CardItemProps) {
     }
   }
 
-  const borderColor = getCardBorderColor(card.colors)
+  const borderColor = getCardBorderColor(card.color_identity)
 
   return (
     <div

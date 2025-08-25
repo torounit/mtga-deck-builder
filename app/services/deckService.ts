@@ -191,7 +191,7 @@ function getDeckColors(deck: Deck): string[] {
   const colorSet = new Set<string>()
 
   allCards.forEach((deckCard) => {
-    deckCard.card.colors.forEach((color) => {
+    deckCard.card.color_identity.forEach((color) => {
       colorSet.add(color)
     })
   })
