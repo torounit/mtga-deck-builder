@@ -14,11 +14,11 @@ export default createRoute((c) => {
             >
               ← デッキ一覧
             </a>
-            <h1 class="text-xl font-bold text-gray-900">新規デッキ作成</h1>
+            <h1 class="text-lg font-bold text-gray-900">新規デッキ作成</h1>
           </div>
         </div>
       </header>
-      <main class="px-4 py-2">
+      <main class="p-4">
         <DeckBuilderApp />
       </main>
     </div>

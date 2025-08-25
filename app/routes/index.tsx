@@ -7,10 +7,10 @@ export default createRoute((c) => {
       <title>MTG Arena Deck Builder</title>
       <header class="bg-white shadow-sm border-b">
         <div class="px-4 py-2">
-          <h1 class="text-xl font-bold text-gray-900">MTG Arena Deck Builder</h1>
+          <h1 class="text-lg font-bold text-gray-900">MTG Arena Deck Builder</h1>
         </div>
       </header>
-      <main class="px-4 py-4">
+      <main class="p-4">
         <DeckListPage />
       </main>
     </div>
