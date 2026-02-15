@@ -3,9 +3,9 @@ import DeckBuilderApp from '../../islands/deckBuilderApp'
 
 export default createRoute((c) => {
   return c.render(
-    <div class="min-h-screen bg-gray-50">
+    <div class="h-full flex flex-col bg-gray-50">
       <title>新規デッキ作成 - MTG Arena Deck Builder</title>
-      <header class="bg-white shadow-sm border-b">
+      <header class="flex-shrink-0 bg-white shadow-sm border-b">
         <div class="px-4 py-2">
           <div class="flex items-center gap-3">
             <a
@@ -18,7 +18,7 @@ export default createRoute((c) => {
           </div>
         </div>
       </header>
-      <main class="p-4">
+      <main class="flex-1 overflow-hidden p-4">
         <DeckBuilderApp />
       </main>
     </div>

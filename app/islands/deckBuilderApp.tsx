@@ -115,7 +115,7 @@ export default function DeckBuilderApp({ deckId }: DeckBuilderAppProps) {
   }
 
   return (
-    <div class="flex flex-col xl:flex-row gap-4" style="height: calc(100vh - 4rem);">
+    <div class="h-full flex flex-col xl:flex-row gap-4">
       <div class="flex-1 min-h-0 min-w-0">
         <CardSearch onCardAdd={handleCardAdd} />
       </div>
