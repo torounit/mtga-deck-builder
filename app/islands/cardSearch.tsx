@@ -24,7 +24,7 @@ export default function CardSearch({ onCardAdd }: CardSearchProps) {
   const [hasMore, setHasMore] = useState(false)
   const [isInitialLoad, setIsInitialLoad] = useState(true)
 
-  const pageSize = 16
+  const pageSize = 80
 
   const handleToggleColor = (colorCode: string) => {
     setSelectedColors(prev => {
