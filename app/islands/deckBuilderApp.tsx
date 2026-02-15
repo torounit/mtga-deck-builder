@@ -115,11 +115,11 @@ export default function DeckBuilderApp({ deckId }: DeckBuilderAppProps) {
   }
 
   return (
-    <div class="grid grid-cols-1 xl:grid-cols-3 gap-4" style="height: calc(100vh - 4rem);">
-      <div class="xl:col-span-2 min-h-0">
+    <div class="flex flex-col xl:flex-row gap-4" style="height: calc(100vh - 4rem);">
+      <div class="flex-1 min-h-0 min-w-0">
         <CardSearch onCardAdd={handleCardAdd} />
       </div>
-      <div class="xl:col-span-1 min-h-0">
+      <div class="w-full xl:w-auto xl:max-w-[400px] min-h-0">
         <DeckBuilder 
           deck={deck}
           onCardAdd={handleCardAdd}
