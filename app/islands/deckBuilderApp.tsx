@@ -13,6 +13,7 @@ interface DeckBuilderAppProps {
 export default function DeckBuilderApp({ deckId }: DeckBuilderAppProps) {
   const [deck, setDeck] = useState<Deck>(() => DeckService.createEmptyDeck())
   const [isClient, setIsClient] = useState(false)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
   useEffect(() => {
     setIsClient(true)
@@ -114,19 +115,64 @@ export default function DeckBuilderApp({ deckId }: DeckBuilderAppProps) {
     setDeck(prev => ({ ...prev, name }))
   }
 
+  const toggleSidebar = () => {
+    setIsSidebarOpen(prev => !prev)
+  }
+
+  const closeSidebar = () => {
+    setIsSidebarOpen(false)
+  }
+
   return (
-    <div class="h-full flex flex-col xl:flex-row gap-4">
+    <div class="h-full flex flex-col xl:flex-row gap-4 relative">
+      {/* トグルボタン - 小画面のみ表示 */}
+      <button
+        onClick={toggleSidebar}
+        class="xl:hidden fixed bottom-4 right-4 z-50 bg-blue-600 text-white p-3 rounded-full shadow-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+        aria-label="デッキリストを表示"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+
+      {/* メインカラム - カード検索 */}
       <div class="flex-1 min-h-0 min-w-0">
         <CardSearch onCardAdd={handleCardAdd} />
       </div>
-      <div class="w-full xl:w-auto xl:max-w-[400px] min-h-0">
-        <DeckBuilder 
-          deck={deck}
-          onCardAdd={handleCardAdd}
-          onCardRemove={handleCardRemove}
-          onCardMove={handleCardMove}
-          onDeckNameChange={handleDeckNameChange}
+
+      {/* オーバーレイ - 小画面でサイドバーが開いている時のみ表示 */}
+      {isSidebarOpen && (
+        <div 
+          class="xl:hidden fixed inset-0 bg-black/30 z-40"
+          onClick={closeSidebar}
         />
+      )}
+
+      {/* サイドバー - デッキビルダー */}
+      <div 
+        class={`
+          xl:relative xl:w-auto xl:max-w-[400px] xl:min-h-0
+          fixed top-0 right-0 h-full w-[90%] max-w-[400px] z-40
+          xl:bg-transparent xl:shadow-none
+          bg-white shadow-lg
+          transition-transform duration-300 ease-in-out
+          ${isSidebarOpen ? 'translate-x-0' : 'translate-x-full'}
+          xl:translate-x-0
+          p-4 xl:p-0
+        `}
+      >
+        <div class="h-full flex flex-col">
+          <div class="h-full overflow-hidden">
+            <DeckBuilder 
+              deck={deck}
+              onCardAdd={handleCardAdd}
+              onCardRemove={handleCardRemove}
+              onCardMove={handleCardMove}
+              onDeckNameChange={handleDeckNameChange}
+            />
+          </div>
+        </div>
       </div>
     </div>
   )
