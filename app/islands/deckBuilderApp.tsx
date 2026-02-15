@@ -154,12 +154,14 @@ export default function DeckBuilderApp({ deckId }: DeckBuilderAppProps) {
         class={`
           xl:relative xl:w-auto xl:max-w-[400px] xl:min-h-0
           fixed top-0 right-0 h-full w-[90%] max-w-[400px] z-40
+          xl:bg-transparent xl:shadow-none
           bg-white shadow-lg
           transition-transform duration-300 ease-in-out
           ${isSidebarOpen ? 'translate-x-0' : 'translate-x-full'}
           xl:translate-x-0
+          p-4 xl:p-0
         `}
-        style="height: calc(100vh - 4rem); margin-top: 4rem;"
+        style="height: calc(100vh - 4rem);"
       >
         <div class="h-full flex flex-col">
           {/* 閉じるボタン - 小画面のみ表示 */}

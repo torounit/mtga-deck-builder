@@ -125,7 +125,7 @@ export default function DeckBuilder({
         />
       </div>
 
-      <div class="flex-1 overflow-y-auto space-y-6 pr-2">
+      <div class="flex-1 overflow-y-auto space-y-6 xl:pr-2">
         <DeckSection
           title="メインデッキ"
           cards={deck.mainDeck}
