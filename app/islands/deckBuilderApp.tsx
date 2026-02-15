@@ -124,7 +124,7 @@ export default function DeckBuilderApp({ deckId }: DeckBuilderAppProps) {
   }
 
   return (
-    <div class="flex flex-col xl:flex-row gap-4 relative" style="height: calc(100vh - 4rem);">
+    <div class="h-full flex flex-col xl:flex-row gap-4 relative">
       {/* トグルボタン - 小画面のみ表示 */}
       <button
         onClick={toggleSidebar}
