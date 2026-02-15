@@ -144,7 +144,7 @@ export default function DeckBuilderApp({ deckId }: DeckBuilderAppProps) {
       {/* オーバーレイ - 小画面でサイドバーが開いている時のみ表示 */}
       {isSidebarOpen && (
         <div 
-          class="xl:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
+          class="xl:hidden fixed inset-0 bg-black/30 z-40"
           onClick={closeSidebar}
         />
       )}
