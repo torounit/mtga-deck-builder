@@ -20,7 +20,7 @@ export default createRoute((c) => {
           </div>
         </div>
       </header>
-      <main class="flex-1 overflow-hidden p-4">
+      <main class="flex-1 overflow-auto p-4">
         <DeckBuilderApp deckId={deckId} />
       </main>
     </div>
