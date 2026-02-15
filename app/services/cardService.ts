@@ -116,7 +116,7 @@ export async function searchCards(
   filters: CardSearchFilters,
   options: SearchOptions = {}
 ): Promise<CardSearchResult> {
-  const { page = 1, pageSize = 16 } = options
+  const { page = 1, pageSize = 80 } = options
 
   // どのScryfall APIページから取得するかを計算
   const scryfallPageStart =
