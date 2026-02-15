@@ -17,7 +17,7 @@ export default function CardGrid({
   return (
     <div class="h-full flex flex-col">
       <div class="flex-1 overflow-y-auto">
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 p-1">
+        <div class="grid gap-4 p-1" style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));">
           {cards.map((card) => (
             <CardItem
               key={card.id}
